@@ -4,6 +4,22 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 
+#include "../atlasstyle-00-04-02/AtlasUtils.h"
+#include "../atlasstyle-00-04-02/AtlasStyle.h"
+#include "../atlasstyle-00-04-02/AtlasLabels.h"
+#include "../atlasstyle-00-04-02/AtlasStyle.C"
+
+#ifdef __CLING__
+// these are not headers - do not treat them as such - needed for ROOT6
+#include "../atlasstyle-00-04-02/AtlasLabels.C"
+#include "../atlasstyle-00-04-02/AtlasUtils.C"
+#endif
+
+#ifdef __CINT__
+gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
+gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
+#endif
+
 void plotmult::Loop()
 {
 //   In a ROOT session, you can do:
@@ -30,8 +46,19 @@ void plotmult::Loop()
 //    fChain->GetEntry(jentry);       //read all branches
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
+int q2_min = 1;
+int q2_max = 1e3;
+   Float_t q2_bins[31];   
+  float initial = log(q2_min);
+  float incre = log(q2_max/q2_min)/30;
+  for (int i = 0; i < 31;i++)  {
+      q2_bins[i] = TMath::Power(TMath::E(),initial); 
+      initial = initial + incre;
+  }
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = fChain->GetEntries();
+   TH1F* multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kRed, 0.3, 21, 1, false);
+   TH1F* Q2P = hotTH1F("Q2", "dN/N vs Q2",30,q2_bins, "", "",kRed, 0.3, 21, 1, true);
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -39,5 +66,7 @@ void plotmult::Loop()
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
+      cout << particles_KS.size() << endl;
+      return;
    }
 }

@@ -182,6 +182,11 @@ plotmult::plotmult(TTree *tree) : fChain(0)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
+
+gSystem->AddIncludePath("/afs/rhic/eic/restructured/env/pro/lib/");
+  gSystem->Load("/afs/rhic/eic/restructured/env/pro/lib/libeicsmear.so");
+  gInterpreter->AddIncludePath("/afs/rhic/eic/restructured/env/pro/lib/");
+  gInterpreter->Load("/afs/rhic/eic/restructured/env/pro/lib/libeicsmear.so");
    if (tree == 0) {
       TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("fort91.root");
       if (!f || !f->IsOpen()) {

@@ -19,6 +19,9 @@
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
+const int listn = 13;
+const int partl[listn] = {11,13,22,81,130,211,310,321,411,421,431,2112,2212};
+const int charl[listn] = {-1,-1,0,0,0,-1,0,1,1,0,1,0,1};
 
 void plotmult::Loop()
 {

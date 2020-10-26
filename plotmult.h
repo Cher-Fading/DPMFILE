@@ -7,6 +7,12 @@
 
 #ifndef plotmult_h
 #define plotmult_h
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/EventBase.h"
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/EventPythia.h"
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/Particle.h"
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/EventDpmjet.h"
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/Forester.h"
+#include "/afs/rhic/eic/restructured/env/pro/PACKAGES/eic-smear/include/eicsmear/erhic/ForesterStatus.h.betterbutdifferent"
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -183,14 +189,10 @@ plotmult::plotmult(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
 
-gSystem->AddIncludePath("/afs/rhic/eic/restructured/env/pro/lib/");
-  gSystem->Load("/afs/rhic/eic/restructured/env/pro/lib/libeicsmear.so");
-  gInterpreter->AddIncludePath("/afs/rhic/eic/restructured/env/pro/lib/");
-  gInterpreter->Load("/afs/rhic/eic/restructured/env/pro/lib/libeicsmear.so");
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("fort91.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("~/dpmjet3-32BIT/fort91.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("fort91.root");
+         f = new TFile("~/dpmjet3-32BIT/fort91.root");
       }
       f->GetObject("EICTree",tree);
 

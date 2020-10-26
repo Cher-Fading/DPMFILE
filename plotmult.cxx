@@ -28,7 +28,6 @@ void plotmult(string filename)
 
   TFile *f = TFile::Open(Form("%s.root", filename.c_str()));
   TTree *EICTree = (TTree *)f->Get("EICTree");
-  //cout << "here" << endl;
   int kMaxparticles = 1000;
   Int_t particles_KS[kMaxparticles];
   Int_t particles_id[kMaxparticles];
@@ -52,7 +51,7 @@ int q2_max = 1e3;
    Long64_t nentries = EICTree->GetEntries();
   for (int j = 0; j < nentries; j++){
     EICTree->GetEntry(j);
-    cout << sizeof(particles_id)/sizeof(Int_t) << endl;
+    cout << sizeof(particles_KS)/sizeof(Int_t) << endl;
     return;
   }
 }

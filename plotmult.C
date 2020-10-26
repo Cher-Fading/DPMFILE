@@ -66,7 +66,7 @@ int q2_max = 1e3;
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // if (Cut(ientry) < 0) continue;
-      cout << particles_KS.size() << endl;
+      cout << (sizeof(particles_KS)/sizeof(Int_t)) << endl;
       return;
    }
 }

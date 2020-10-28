@@ -1,4 +1,4 @@
-cd CondorResult
+cd ~/dpmjet3_32BIT/CondorResult
 mkdir -p $1
 mkdir -p $1/$2
 cd ..

@@ -63,6 +63,8 @@ int q2_max = 1e3;
     if (j%1000==0) cout << "At event " << j << endl;
     EICTree->GetEntry(j);
     //if (QSquared < 5) continue;
+cout << QSquared << endl;
+return;
     Q2P->Fill(QSquared);
     //cout << sizeof(particles_id)/sizeof(Int_t) << endl;
     int counter1 = 0;

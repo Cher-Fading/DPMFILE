@@ -54,6 +54,8 @@ void read(TString inFileNames, int nEvents ) {
    
    // Add the file(s) we want to analyse to the chain.
    // We could add multiple files if we wanted.
+   std::string inname = inFileNames.Data();
+   std::string outname = inname.substr(inname.find_last_of("/",inname.find("/*.root")-1)+1,inname.rfind("/")-inname.find_last_of("/",inname.find("/*.root")-1)-1);
    tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
 // tree.Add(/path/to/otherFileNames ); // etc... 
    
@@ -73,7 +75,7 @@ void read(TString inFileNames, int nEvents ) {
    
    // Now we can do some analysis...
    int q2_min = 1;
-int q2_max = 20;
+   int q2_max = 20;
    Float_t q2_bins[31];   
   float initial = log(q2_min);
   float incre = log(q2_max/q2_min)/30;
@@ -94,7 +96,7 @@ int q2_max = 20;
    TH1D deltaPhi("deltaPhi",
                  "Delta-phi of hadrons",
                  40, 0.0, 3.1415 );*/
-   TFile* fout = TFile::Open("result.root","RECREATE");
+   TFile* fout = TFile::Open(Form("%s_result.root",outname.c_str()),"RECREATE");
   TH1F* multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kRed, 0.3, 21, 1, false);
   //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
    TH1F* Q2P = hotTH1F("Q2", "dN/N vs Q2",30,q2_bins, "", "",kRed, 0.3, 21, 1, true);
@@ -109,7 +111,7 @@ int q2_max = 20;
       
       // The event contains a vector (array) of particles.
       int nParticles = event->GetNTracks();
-      
+      cout << nParticles << endl;
       // We now know the number of particles in the event, so loop over
       // the particles:
       int counter = 0;
@@ -159,7 +161,7 @@ int q2_max = 20;
    myText(0.6,0.75,kBlack,"Q^{2} > 1 GeV",0.04);
    myText(0.6,0.7,kBlack,"0.1 GeV < p_{T}^{trk} < 5 GeV",0.04);
    c0->SetLogy();
-   c0->SaveAs("mult.pdf");
+   c0->SaveAs(Form("%s_mult.pdf",outname.c_str()));
 
    
    h1 = thePad->DrawFrame(1,1,20,1e4);
@@ -170,7 +172,7 @@ int q2_max = 20;
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
    Q2P->Draw("SAME");
 //c0->SetLogx();
-   c0->SaveAs("q2.pdf");
+   c0->SaveAs(Form("%s_q2.pdf",outname.c_str()));
    
    fout->Close();
    //ptHist.Draw();

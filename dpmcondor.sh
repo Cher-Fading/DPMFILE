@@ -3,7 +3,7 @@ cd ~/dpmjet3-32BIT/
 mkdir -p /sphenix/user/xwang97/DPMJET/$1
 mkdir -p /sphenix/user/xwang97/DPMJET/$1/$2
 cp $1.inp /sphenix/user/xwang97/DPMJET/$1/$2/
-output=$((50 + $2))
+output=$((21 + $2))
 echo output$output
 TAB=$'\t'
 sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/$1/$2/$1.inp

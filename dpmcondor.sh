@@ -12,3 +12,4 @@ sed -i "s/^FSEED.*/FSEED           $(($2-5))           $((10-$output))          
 mv fort.${output} /sphenix/user/xwang97/DPMJET/$1/$2/
 root -q 'BuildIt.C("'/sphenix/user/xwang97/DPMJET/$1/$2/fort.${output}'","'/sphenix/user/xwang97/DPMJET/$1/$2/'")'
 mv /sphenix/user/xwang97/DPMJET/$1/$2/fort.root /sphenix/user/xwang97/DPMJET/$1/fort_$1_$2.root
+rm /sphenix/user/xwang97/DPMJET/$1/$2/fort.${output}

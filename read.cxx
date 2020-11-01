@@ -44,7 +44,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           1, 1, 0, 1, 0,
                           1};
 
-void read(TString inFileNames, int nEvents = 0)
+void read(TString inFileNames, int nEvents = 0, bool debug = false)
 {
 
    // If the analysis solely uses TTree::Draw statements,
@@ -92,6 +92,7 @@ void read(TString inFileNames, int nEvents = 0)
    for (int i = 0; i < 31; i++)
    {
       q2_bins[i] = TMath::Power(TMath::E(), initial);
+cout << q2_bins[i] << endl;
       initial = initial + incre;
    }
    // We record the largest particle pT we find here:
@@ -114,17 +115,19 @@ void read(TString inFileNames, int nEvents = 0)
    // Loop over events:
    if (nEvents == 0)
       nEvents = tree.GetEntries();
-   //cout << "nEvents: " << nEvents << endl;
+   cout << "nEvents: " << nEvents << endl;
+if (debug && nEvents > 100) nEvents = 1;
    for (int i(0); i < nEvents; ++i)
    {
 
       // Read the next entry from the tree.
       tree.GetEntry(i);
-      //cout << "Q2: " << event->GetQ2() << endl;
+      if (debug) cout << "Q2: " << event->GetQ2() << endl << endl;
       int nParticles = event->GetNTracks();
       if (i % 10000 == 0)
          cout << "processing event " << i << " with particles " << nParticles << endl;
-      //if ((event->GetQ2())<Q2_cut) continue;
+//Q2 cut
+      if ((event->GetQ2())<Q2_cut || (event->GetQ2()>1e4)) continue;
       // Fill the Q2 vs. x histogram:
       Q2P->Fill(event->GetQ2());
 
@@ -139,12 +142,22 @@ void read(TString inFileNames, int nEvents = 0)
          //const erhic::ParticleMCeA* particleeA = (erhic::ParticleMCeA*)event->GetTrack(j);
          const Particle *particle = event->GetTrack(j);
          // Let's just select charged pions for this example:
+	
          int pdg = particle->GetPdgCode();
          int ks = particle->GetStatus();
-         //cout << "particle mass number: " << particleeA->massNum << endl;
-         cout << "ks " << ks << endl;
-         cout << "pdg " << pdg << endl;
-         if (ks != 1 && ks != -1 && ks != 1001)
+//pt cut
+         double pt = particle->GetPt();
+//eta cut
+	double eta = particle->GetEta();
+	if (eta < -1.5 || eta > 2.0) continue;
+if(debug) cout << "eta: " << eta << endl;
+         if (debug) cout << "pt " << pt << " GeV" << endl;
+         if (pt > 5 || pt < 0.1)
+            continue;
+//cout << "particle mass number: " << particleeA->massNum << endl;
+         if (debug) cout << "ks " << ks << "; pdg " << pdg << endl;
+//final state particles only   
+      if (ks != 1 && ks != -1 && ks != 1001)
             continue;
          bool charged = false;
          bool found = false;
@@ -162,16 +175,14 @@ void read(TString inFileNames, int nEvents = 0)
                found = true;
             }
          }
-         if (!found)
+if (debug) cout << "found? " << found << "; charged? " << charged << endl;
+         if (!found && debug)
             cout << "not listed pdg id: " << pdg << endl;
-         if (!charged)
+         if (!charged && debug)
             continue;
          //if(abs(pdg) != 211 ) continue;
 
-         double pt = particle->GetPt();
-         cout << "pt " << pt << " GeV" << endl;
-         if (pt > 5 || pt < 0.1)
-            continue;
+         
          //ptHist.Fill(particle->GetPt());
          counter++;
          // Update the highest pT:
@@ -183,7 +194,7 @@ void read(TString inFileNames, int nEvents = 0)
    } // for
 
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;
-
+	TCanvas* c0 = new TCanvas("c0","c0",500,500);
    TPad *thePad = (TPad *)c0->cd();
    TH1F *h1 = thePad->DrawFrame(0, 1, 30, nEvents);
    h1->SetXTitle("N_{ch}");
@@ -210,7 +221,7 @@ void read(TString inFileNames, int nEvents = 0)
    Q2P->Write();
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
    Q2P->Draw("SAME");
-   //c0->SetLogx();
+   c0->SetLogx();
    c0->SaveAs(Form("%s_q2.pdf", outname.c_str()));
 
    fout->Close();

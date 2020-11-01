@@ -11,10 +11,10 @@ Notification    = Never
 Executable   = /sphenix/u/xwang97/DPMFILE/dpmcondor.sh
 
 # The argument to pass to the executable.
-## first argument  - process number
-## second argument - datatype
-# third argument - PbPb or not
-Arguments       = ep_HERA $(Process)
+## first argument  - input cards
+## second argument - process number
+# third argument - number of events per sample
+Arguments       = ep_HERA2 $(Process) 1E4
 
 # The requirement line specifies which machines we want to
 # run this job on.  Any arbitrary classad expression can
@@ -78,6 +78,6 @@ Log       =  /sphenix/u/xwang97/logFiles/log.$(Process)
 # accounting_group = group_atlas.uillu
 +NewQueue      = True
  
-Queue 79
+Queue 2000
 
 

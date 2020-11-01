@@ -1,15 +1,32 @@
 #!/bin/bash
-cd ~/dpmjet3-32BIT/
-mkdir -p /sphenix/user/xwang97/DPMJET/$1
-mkdir -p /sphenix/user/xwang97/DPMJET/$1/$2
-cp $1.inp /sphenix/user/xwang97/DPMJET/$1/$2/
-output=$((21 + $2))
-echo output$output
+cd /sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/
+A=$(($2/79))
+B=$(($2%79)) #use modulo to have more files
+mkdir -p /sphenix/user/xwang97/DPMJET/$1/$A/$B
+cp $1.inp /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp
+cd /sphenix/user/xwang97/DPMJET/$1/$A/
+if [ "$B" -eq "0" ]
+then
+echo "copying nuclear.bin"
+cp /sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/nuclear.bin .
+fi
+echo $(pwd)
+echo $(ls)
+output=$((21 + $B))
+echo output $output round $A queue $2
 TAB=$'\t'
-sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/$1/$2/$1.inp
-sed -i "s/^FSEED.*/FSEED           $(($2-5))           $((10-$output))           $(($output-3))           $((13-$output))/" /sphenix/user/xwang97/DPMJET/$1/$2/$1.inp
-./dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/$1/$2/$1.inp > /sphenix/user/xwang97/DPMJET/$1/$2/log$1_$2.txt
-mv fort.${output} /sphenix/user/xwang97/DPMJET/$1/$2/
-root -q 'BuildIt.C("'/sphenix/user/xwang97/DPMJET/$1/$2/fort.${output}'","'/sphenix/user/xwang97/DPMJET/$1/$2/'")'
-mv /sphenix/user/xwang97/DPMJET/$1/$2/fort.root /sphenix/user/xwang97/DPMJET/$1/fort_$1_$2.root
-rm /sphenix/user/xwang97/DPMJET/$1/$2/fort.${output}
+sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp
+sed -i "s/^FSEED.*/FSEED           $((($2/8000)%20-5))           $((10-($2/400)%20))           $((($2/20)%20-3))           $((13-$2%20))/" /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp
+sed -i "s/^START.*/START          ${3}           0.0/" /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp
+cat /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp
+if [ "$((13-$2%20))" -eq "4" ]
+then
+echo "problematic random seed, exiting"
+exit 1
+fi
+/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp > /sphenix/user/xwang97/DPMJET/$1/$A/log$1_$2.txt
+echo "now convert to root"
+root -q '/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/BuildIt.C("'fort.${output}'","'$B'")'
+mv /sphenix/user/xwang97/DPMJET/$1/$A/$B/fort.root /sphenix/user/xwang97/DPMJET/$1/fort_$1_$2_$3.root
+echo "now remove old output"
+rm /sphenix/user/xwang97/DPMJET/$1/$A/fort.${output}

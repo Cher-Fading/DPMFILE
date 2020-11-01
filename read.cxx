@@ -44,7 +44,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           1, 1, 0, 1, 0,
                           1};
 
-void read(TString inFileNames, int nEvents = 0, bool debug = false)
+void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false)
 {
 
    // If the analysis solely uses TTree::Draw statements,
@@ -59,6 +59,19 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false)
 
    // The TTrees are named EICTree.
    // Create a TChain for trees with this name.
+
+   int q2_min = 1;
+   Float_t q2_bins[31];
+   float initial = log(q2_min);
+   float incre = log(Q2_max / q2_min) / 30;
+
+   for (int i = 0; i < 31; i++)
+   {
+      q2_bins[i] = TMath::Power(TMath::E(), initial);
+      if (debug) cout << q2_bins[i] << endl;
+      initial = initial + incre;
+   }
+
    TChain tree("EICTree");
 
    // Add the file(s) we want to analyse to the chain.
@@ -66,7 +79,10 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false)
    std::string inname = inFileNames.Data();
    std::string outname = inname.substr(inname.find_last_of("/", inname.find("/*.root") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.find("/*.root") - 1) - 1);
    cout << outname << endl;
-   tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
+TFile* fout;
+TH1F *multP, *Q2P;
+
+if (!replot) {tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
                           // tree.Add(/path/to/otherFileNames ); // etc...
 
    // Create an object to store the current event from the tree.
@@ -84,17 +100,6 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false)
    tree.SetBranchAddress("event", &event); // Note &event, not event.
 
    // Now we can do some analysis...
-   int q2_min = 1;
-   Float_t q2_bins[31];
-   float initial = log(q2_min);
-   float incre = log(Q2_max / q2_min) / 30;
-
-   for (int i = 0; i < 31; i++)
-   {
-      q2_bins[i] = TMath::Power(TMath::E(), initial);
-if (debug) cout << q2_bins[i] << endl;
-      initial = initial + incre;
-   }
    // We record the largest particle pT we find here:
    double highestPt(-1.);
 
@@ -108,10 +113,10 @@ if (debug) cout << q2_bins[i] << endl;
    TH1D deltaPhi("deltaPhi",
                  "Delta-phi of hadrons",
                  40, 0.0, 3.1415 );*/
-   TFile *fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
-   TH1F *multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
+   fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
+   multP= hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
    //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
-   TH1F *Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
+   Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
    // Loop over events:
    if (nEvents == 0)
       nEvents = tree.GetEntries();
@@ -194,41 +199,58 @@ if (debug) cout << "found? " << found << "; charged? " << charged << endl;
       } // for
       multP->Fill(counter);
    } // for
-
+multP->SetMarkerSize(1);   
+Q2P->Write();  
+multP->Write();
+Q2P->SetMarkerSize(1); 
+fout->Close();
+}
+else nEvents = 1e7;
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;
+
+
 	TCanvas* c0 = new TCanvas("c0","c0",500,500);
    TPad *thePad = (TPad *)c0->cd();
-   TH1F *h1 = thePad->DrawFrame(0, 1, 30, nEvents);
+   TH1F *h1 = thePad->DrawFrame(0, 1e2, 30, nEvents);
    h1->SetXTitle("N_{ch}");
    h1->SetYTitle("dN/dN_{ch}");
    h1->SetTitle("Distribution of Track Multiplicity in Events");
    h1->Draw();
-   multP->Write();
+   if (!replot) multP->Write();
    //multP_2->Write();
    //multP->Scale(1./multP->GetSumOfWeights());
    //multP_2->Scale(1./multP_2->GetSumOfWeights());
-multP->SetMarkerSize(1);
-   multP->Draw("SAME, HIST P");
+if (replot) {fout=TFile::Open(Form("%s_result.root",outname.c_str()),"READ");
+multP=(TH1F*)fout->Get("Multi");
+nEvents = 2e7;
+multP->Draw("SAME, HIST P");
+fout->Close();
+}
+else multP->Draw("SAME, HIST P");
+
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
    //myMarkerText( 0.6, 0.8, kBlue, 21, "Particle Abs(status) = 1", 1.2, 0.04);
-   myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", Q2_cut), 0.04);
-   myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+  myText(0.4,0.8,kBlack, "#sqrt{s} = 318 GeV",0.04);
+   myText(0.4, 0.75, kBlack, Form("Q^{2} > %.1f GeV", Q2_cut), 0.04);
+   myText(0.4, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+myText(0.4,0.65,kBlack, "-1.5 < #eta < 2.0",0.04);
    c0->SetLogy();
    c0->SaveAs(Form("%s_mult.pdf", outname.c_str()));
 
-   h1 = thePad->DrawFrame(1, 1, Q2_max, nEvents);
+   h1 = thePad->DrawFrame(1, 1e2, Q2_max, nEvents);
    h1->SetXTitle("Q^{2} (GeV^{2})");
    h1->SetYTitle("dN/dQ^{2} (GeV^{2})");
    h1->SetTitle("Distribution of Q^{2} in Events");
-   Q2P->Write();
+   if (!replot) Q2P->Draw("SAME Hist p");   
+else{fout=TFile::Open(Form("%s_result.root",outname.c_str()),"READ"); Q2P=(TH1F*)fout->Get("Q2");Q2P->Draw("SAME Hist p");   fout->Close();}
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
-Q2P->SetMarkerSize(1);
-   Q2P->Draw("SAME Hist p");
+
+
    c0->SetLogx();
    c0->SaveAs(Form("%s_q2.pdf", outname.c_str()));
 
-   fout->Close();
+
    //ptHist.Draw();
    //canvas.Print("pt.png" );
 }

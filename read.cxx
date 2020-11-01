@@ -222,11 +222,14 @@ else nEvents = 1e7;
    //multP_2->Scale(1./multP_2->GetSumOfWeights());
 if (replot) {fout=TFile::Open(Form("%s_result.root",outname.c_str()),"READ");
 multP=(TH1F*)fout->Get("Multi");
+multP->SetDirectory(0);
 nEvents = 2e7;
-multP->Draw("SAME, HIST P");
+
 fout->Close();
 }
-else multP->Draw("SAME, HIST P");
+multP->SetMarkerSize(1);
+multP->Draw("SAME, HIST P");
+
 
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
@@ -243,7 +246,8 @@ myText(0.4,0.65,kBlack, "-1.5 < #eta < 2.0",0.04);
    h1->SetYTitle("dN/dQ^{2} (GeV^{2})");
    h1->SetTitle("Distribution of Q^{2} in Events");
    if (!replot) Q2P->Draw("SAME Hist p");   
-else{fout=TFile::Open(Form("%s_result.root",outname.c_str()),"READ"); Q2P=(TH1F*)fout->Get("Q2");Q2P->Draw("SAME Hist p");   fout->Close();}
+else{fout=TFile::Open(Form("%s_result.root",outname.c_str()),"READ"); Q2P=(TH1F*)fout->Get("Q2");Q2P->SetDirectory(0);   fout->Close();}
+Q2P->SetMarkerSize(1); Q2P->Draw("SAME Hist p");
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
 
 

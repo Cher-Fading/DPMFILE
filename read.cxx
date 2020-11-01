@@ -92,7 +92,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false)
    for (int i = 0; i < 31; i++)
    {
       q2_bins[i] = TMath::Power(TMath::E(), initial);
-cout << q2_bins[i] << endl;
+if (debug) cout << q2_bins[i] << endl;
       initial = initial + incre;
    }
    // We record the largest particle pT we find here:
@@ -111,12 +111,13 @@ cout << q2_bins[i] << endl;
    TFile *fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
    TH1F *multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
    //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
-   TH1F *Q2P = hotTH1F("Q2", "dN/N vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
+   TH1F *Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
    // Loop over events:
    if (nEvents == 0)
       nEvents = tree.GetEntries();
    cout << "nEvents: " << nEvents << endl;
 if (debug && nEvents > 100) nEvents = 1;
+int nev = 0;
    for (int i(0); i < nEvents; ++i)
    {
 
@@ -128,6 +129,7 @@ if (debug && nEvents > 100) nEvents = 1;
          cout << "processing event " << i << " with particles " << nParticles << endl;
 //Q2 cut
       if ((event->GetQ2())<Q2_cut || (event->GetQ2()>1e4)) continue;
+nev++;
       // Fill the Q2 vs. x histogram:
       Q2P->Fill(event->GetQ2());
 
@@ -205,7 +207,8 @@ if (debug) cout << "found? " << found << "; charged? " << charged << endl;
    //multP_2->Write();
    //multP->Scale(1./multP->GetSumOfWeights());
    //multP_2->Scale(1./multP_2->GetSumOfWeights());
-   multP->Draw("SAME, LP");
+multP->SetMarkerSize(1);
+   multP->Draw("SAME, HIST P");
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
    //myMarkerText( 0.6, 0.8, kBlue, 21, "Particle Abs(status) = 1", 1.2, 0.04);
@@ -220,7 +223,8 @@ if (debug) cout << "found? " << found << "; charged? " << charged << endl;
    h1->SetTitle("Distribution of Q^{2} in Events");
    Q2P->Write();
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
-   Q2P->Draw("SAME");
+Q2P->SetMarkerSize(1);
+   Q2P->Draw("SAME Hist p");
    c0->SetLogx();
    c0->SaveAs(Form("%s_q2.pdf", outname.c_str()));
 

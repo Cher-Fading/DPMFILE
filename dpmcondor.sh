@@ -17,7 +17,7 @@ echo $(ls)
 output=$((21 + $B))
 echo output $output round $A queue $2
 
-if [ "$((13-$2%20))" -eq "4" ] || [ "$((10-($2/400)%20))" -eq "7" ]
+if [ "$((13-$2%20))" -eq "4" ]
 then
 echo "problematic random seed, exiting"
 exit 1

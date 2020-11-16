@@ -113,7 +113,6 @@ if (!replot) {tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.
    TH1D deltaPhi("deltaPhi",
                  "Delta-phi of hadrons",
                  40, 0.0, 3.1415 );*/
-   fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
    multP= hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
    //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
    Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
@@ -123,6 +122,7 @@ if (!replot) {tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.
    cout << "nEvents: " << nEvents << endl;
 if (debug && nEvents > 100) nEvents = 1;
 int nev = 0;
+int ievnn = 0;
    for (int i(0); i < nEvents; ++i)
    {
 
@@ -133,10 +133,11 @@ int nev = 0;
       if (i % 10000 == 0)
          cout << "processing event " << i << " with particles " << nParticles << endl;
 //Q2 cut
-      if ((event->GetQ2())<Q2_cut || (event->GetQ2()>1e4)) continue;
+Q2P->Fill(event->GetQ2());
+      if ((event->GetQ2())<Q2_cut || (event->GetQ2()>1e4)) {ievnn++;continue;}
 nev++;
       // Fill the Q2 vs. x histogram:
-      Q2P->Fill(event->GetQ2());
+      
 
       // The event contains a vector (array) of particles.
 
@@ -199,11 +200,15 @@ if (debug) cout << "found? " << found << "; charged? " << charged << endl;
       } // for
       multP->Fill(counter);
    } // for
+fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
 multP->SetMarkerSize(1);   
 Q2P->Write();  
 multP->Write();
 Q2P->SetMarkerSize(1); 
 fout->Close();
+
+cout << "passed Q2" << nev<< endl;
+cout << "not passed Q2 " << ievnn << endl;
 }
 else nEvents = 1e7;
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;

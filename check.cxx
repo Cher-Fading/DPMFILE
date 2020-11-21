@@ -79,7 +79,6 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    // We could add multiple files if we wanted.
    std::string inname = inFileNames.Data();
    std::string outname = inname.substr(inname.find_last_of("/", inname.find("/*.root") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.find("/*.root") - 1) - 1);
-   if (debug) outname+="_debug";
    cout << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P;
@@ -132,7 +131,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          nEvents = tree.GetEntries();
       cout << "nEvents: " << nEvents << endl;
       if (debug && nEvents > 100)
-         nEvents = 5;
+         nEvents = 1;
       int nev = 0;
       int ievnn = 0;
       for (int i(0); i < nEvents; ++i)
@@ -147,8 +146,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          if (i % 10000 == 0)
             cout << "processing event " << i << " with particles " << nParticles << endl;
          //Q2 cut
-         double q2 = event->GetQ2();
-         Q2P->Fill(q2);
+         Q2P->Fill(event->GetQ2());
          if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > 1e4))
          {
             ievnn++;
@@ -163,8 +161,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          // We now know the number of particles in the event, so loop over
          // the particles:
          int counter = 0;
-         std::vector<TLorentzVector> ein;
-         std::vector<TLorentzVector> eout;
+         int electron_c = 0;
          for (int j(0); j < nParticles; ++j)
          {
             //const erhic::ParticleMCeA* particleeA = (erhic::ParticleMCeA*)event->GetTrack(j);
@@ -180,32 +177,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             double px = particle->GetPx();
             double py = particle->GetPy();
             double pz = particle->GetPz();
-            double e = particle->GetE();
-            //determine incoming electron's 4-momentum
-            if (pdg == 11 && ks == 21 && px == 0 && py == 0 && abs(pz) > 0)
-            {
-               TLorentzVector a(px, py, pz, e);
-               ein.push_back(a);
-            }
-            if (pdg == 11 && ks == 1)
-            {
-               TLorentzVector b(px, py, pz, e);
-               eout.push_back(b);
-            }
-            if (eta < -1.5 || eta > 2.0)
-               continue;
-            if (debug)
-               cout << "eta: " << eta << endl;
-            if (debug)
-               cout << "pt " << pt << " GeV" << endl;
-            if (pt > 5 || pt < 0.1)
-               continue;
-            //cout << "particle mass number: " << particleeA->massNum << endl;
-            if (debug)
-               cout << "ks " << ks << "; pdg " << pdg << endl;
+
             //final state particles only
-            if (ks != 1 && ks != -1 && ks != 1001)
-               continue;
             bool charged = false;
             bool found = false;
             for (int k = 0; k < listn; k++)
@@ -221,6 +194,13 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
                   charged = true;
                   found = true;
                }
+            }
+            if (pdg == 11){
+               double px = particle->GetPx();
+               double py = particle->GetPy();
+               double pz = particle->GetPz();
+               double E = particle->GetE();
+               float newQ2 = 
             }
             if (debug)
                cout << "found? " << found << "; charged? " << charged << endl;
@@ -238,34 +218,19 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             //} // if
          } // for
          multP->Fill(counter);
-
-         for (int k = 0; k < ein.size(); k++)
-         {
-            for (int l = 0; l < eout.size(); l++)
-            {
-               double q2val = -(ein[k] - eout[l]) * (ein[k] - eout[l]);
-               Q2E->Fill(q2,q2val,1./(ein.size()*eout.size());
-               if (debug){
-                  cout << "event: " << i << "; particle: " << j << "; in: " << k << "; out:" << l << endl;
-                  cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
-               }
-            }
-         }
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
       Q2P->Write();
       multP->Write();
       Q2P->SetMarkerSize(1);
-      Q2E->SetMarkerSize(1);
-      Q2E->Write();
       fout->Close();
 
       cout << "passed Q2" << nev << endl;
       cout << "not passed Q2 " << ievnn << endl;
    }
    else
-   nEvents = 1e7;
+      nEvents = 1e7;
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;
 
    TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
@@ -291,7 +256,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       fout->Close();
    }
    multP->SetMarkerSize(1);
-   multP->Draw("SAME");
+   multP->Draw("SAME, HIST P");
 
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
@@ -317,8 +282,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       fout->Close();
    }
    Q2P->SetMarkerSize(1);
-   gStyle->SetErrorX(0);
-   Q2P->Draw("SAME");
+   Q2P->Draw("SAME Hist p");
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
 
    c0->SetLogx();

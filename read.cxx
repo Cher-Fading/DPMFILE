@@ -252,7 +252,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    else
       nEvents = 1e7;
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;
-   return;
+   //return;
    TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
    TPad *thePad = (TPad *)c0->cd();
    TH1F *h1 = thePad->DrawFrame(0, 1e2, 30, nEvents);

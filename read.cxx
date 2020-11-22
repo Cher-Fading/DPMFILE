@@ -43,7 +43,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           0, -1, 0, 0, 1,
                           1, 1, 0, 1, 0,
                           1};
-//root -q -l read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)
+//root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)'
 void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false)
 {
 

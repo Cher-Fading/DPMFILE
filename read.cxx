@@ -260,8 +260,6 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    h1->SetYTitle("dN/dN_{ch}");
    h1->SetTitle("Distribution of Track Multiplicity in Events");
    h1->Draw();
-   if (!replot)
-      multP->Write();
    //multP_2->Write();
    //multP->Scale(1./multP->GetSumOfWeights());
    //multP_2->Scale(1./multP_2->GetSumOfWeights());
@@ -275,7 +273,6 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
 
       fout->Close();
    }
-   multP->SetMarkerSize(1);
    multP->Draw("SAME");
 
    //multP_2->Draw("SAME");
@@ -292,8 +289,6 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    h1->SetXTitle("Q^{2} (GeV^{2})");
    h1->SetYTitle("dN/dQ^{2} (GeV^{2})");
    h1->SetTitle("Distribution of Q^{2} in Events");
-   if (!replot)
-      Q2P->Draw("SAME Hist p");
    else
    {
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");

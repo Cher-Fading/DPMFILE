@@ -78,13 +78,13 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    // Add the file(s) we want to analyse to the chain.
    // We could add multiple files if we wanted.
    std::string inname = inFileNames.Data();
-   std::string outname = inname.substr(inname.find_last_of("/", inname.find("/*.root") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.find("/*.root") - 1) - 1);
+   std::string outname = inname.substr(inname.find_last_of("/", inname.rfind("/") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.rfind("/") - 1) - 1);
    if (debug) outname+="_debug";
    cout << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P;
    TH2F *Q2E;
-   TH1::AddDirectory(kFALSE);
+   //TH1::AddDirectory(kFALSE);
    if (!replot)
    {
       tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -118,6 +118,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    TH1D deltaPhi("deltaPhi",
                  "Delta-phi of hadrons",
                  40, 0.0, 3.1415 );*/
+      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
       Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
@@ -252,7 +253,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             }
          }
       } // for
-      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
+
       multP->SetMarkerSize(1);
       Q2P->Write();
       multP->Write();

@@ -244,9 +244,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             for (int l = 0; l < eout.size(); l++)
             {
                double q2val = -(ein[k] - eout[l]) * (ein[k] - eout[l]);
-               Q2E->Fill(q2,q2val,1./(ein.size()*eout.size());
+               Q2E->Fill(q2,q2val,1./(ein.size()*eout.size()));
                if (debug){
-                  cout << "event: " << i << "; particle: " << j << "; in: " << k << "; out:" << l << endl;
+                  cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                   cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                }
             }

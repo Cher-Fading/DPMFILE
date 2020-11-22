@@ -79,7 +79,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    // We could add multiple files if we wanted.
    std::string inname = inFileNames.Data();
    std::string outname = inname.substr(inname.find_last_of("/", inname.rfind("/") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.rfind("/") - 1) - 1);
-   if (debug) outname+="_debug";
+   if (debug)
+      outname += "_debug";
    cout << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P;
@@ -98,27 +99,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       // If you only need shared quantities like x, Q2 and the particle list
       // you can use EventBase and the macro will be general for any Monte Carlo.
       erhic::EventPythia *event(NULL); // = new EventPythia;
-                                       // EventBase* event(NULL);
-
-      // Now associate the contents of the branch with the buffer.
-      // The events are stored in a branch named event:
+                                       // EventBase* event(NULL)
       tree.SetBranchAddress("event", &event); // Note &event, not event.
-
-      // Now we can do some analysis...
-      // We record the largest particle pT we find here:
-      double highestPt(-1.);
-
-      // Histograms for our analysis.
-      /* TH2D Q2VsX("Q2VsX",
-              "Q^{2} vs. Bjorken x;log_{10}(x);log_{10}(Q^{2})",
-               100, -5., 0., 100, -2., 3. );
-   TH1D ptHist("ptHist",
-               "pT of charged pions",
-               50, 0.0, 2.0 );
-   TH1D deltaPhi("deltaPhi",
-                 "Delta-phi of hadrons",
-                 40, 0.0, 3.1415 );*/
-      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
       Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
@@ -127,6 +109,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       Q2E->GetXaxis()->SetTitle("Q^{2}");
       Q2E->GetYaxis()->SetTitle("-(k-k')^{2}");
       Q2E->GetZaxis()->SetTitle("Normalized (per event) Fraction");
+      Q2E->SetMarkerStyle(21);
 
       // Loop over events:
       if (nEvents == 0)
@@ -245,15 +228,16 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             for (int l = 0; l < eout.size(); l++)
             {
                double q2val = -(ein[k] - eout[l]) * (ein[k] - eout[l]);
-               Q2E->Fill(q2,q2val,1./(ein.size()*eout.size()));
-               if (debug){
+               Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
+               if (debug)
+               {
                   cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                   cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                }
             }
          }
       } // for
-
+      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
       Q2P->Write();
       multP->Write();
@@ -266,9 +250,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       cout << "not passed Q2 " << ievnn << endl;
    }
    else
-   nEvents = 1e7;
+      nEvents = 1e7;
    //std::cout << "The highest pT was " << highestPt << " GeV/c" << std::endl;
-
+   return;
    TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
    TPad *thePad = (TPad *)c0->cd();
    TH1F *h1 = thePad->DrawFrame(0, 1e2, 30, nEvents);

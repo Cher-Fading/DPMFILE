@@ -289,7 +289,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    h1->SetXTitle("Q^{2} (GeV^{2})");
    h1->SetYTitle("dN/dQ^{2} (GeV^{2})");
    h1->SetTitle("Distribution of Q^{2} in Events");
-   else
+   if (replot)
    {
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
       Q2P = (TH1F *)fout->Get("Q2");

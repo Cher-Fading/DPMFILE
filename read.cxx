@@ -300,9 +300,9 @@ outname += name;
                return;
             }
          }
-         const Particle* part_sc = event->GetTrack(scattered_ind);
-         if (part_sc->GetE()< 10) continue;
-         if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
+         //const Particle* part_sc = event->GetTrack(scattered_ind);
+         //if (part_sc->GetE()< 10) continue;
+         //if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
          nev++;
          multP->Fill(counter);
          multa->Fill(countera);

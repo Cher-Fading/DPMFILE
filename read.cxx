@@ -291,7 +291,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             }
          }
          const Particle* part_sc = event->GetTrack(scattered_ind);
-         if (scattered_ind->GetE()< 10) continue;
+         if (part_sc->GetE()< 10) continue;
          if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
          multP->Fill(counter);
          Q2P->Fill(q2);

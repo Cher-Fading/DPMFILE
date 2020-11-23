@@ -90,7 +90,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       outname += "_debug";
    cout << "Name: " << outname << endl;
    TFile *fout;
-   TH1F *multP, *Q2P, *Q2Pa, *Q2Pb, *Q2Pc;
+   TH1F *multP, *Q2P, *multa, *multb, *multc;
    TH2F *Q2E;
    THStack* s;
    //TH1::AddDirectory(kFALSE);

@@ -38,15 +38,15 @@ const int listn = 26;
 const int partl[listn] = {11, 13, 22, 81, 111,
                           130, 211, 310, 313, 321,
                           323, 411, 421, 431, 2112,
-                          2212,3122,3222,3112,3212,
-			  3322,3312,4122,4132,4232,
-			  4212};
+                          2212, 3122, 3222, 3112, 3212,
+                          3322, 3312, 4122, 4132, 4232,
+                          4212};
 const int charl[listn] = {-1, -1, 0, 0, 0,
                           0, -1, 0, 0, 1,
                           1, 1, 0, 1, 0,
-                          1,0,1,-1,0,
-			  0,-1,1,0,1,
-			  1};
+                          1, 0, 1, -1, 0,
+                          0, -1, 1, 0, 1,
+                          1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
 void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0)
@@ -121,7 +121,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       // Loop over events:
       if (nEvents == 0)
          nEvents = tree.GetEntries();
-std::vector<int> notlisted;
+      std::vector<int> notlisted;
       cout << "nEvents: " << nEvents << endl;
       int nev = 0;
       int ievnn = 0;
@@ -132,8 +132,8 @@ std::vector<int> notlisted;
          int counter = 0;
          std::vector<TLorentzVector> ein;
          std::vector<TLorentzVector> eout;
-std::vector<int> ein_ind;
-std::vector<int> eout_ind;
+         std::vector<int> ein_ind;
+         std::vector<int> eout_ind;
          // Read the next entry from the tree.
          tree.GetEntry(i);
          int nParticles = event->GetNTracks();
@@ -145,7 +145,6 @@ std::vector<int> eout_ind;
          if (debug)
             cout << "Q2: " << q2 << endl;
 
-         Q2P->Fill(q2);
          if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > 1e4))
          {
             ievnn++;
@@ -183,13 +182,13 @@ std::vector<int> eout_ind;
             if (pdg == 11 && ks == 21 && px == 0 && py == 0 && abs(pz) > 0)
             {
                TLorentzVector a(px, py, pz, e);
-	       ein_ind.push_back(j);
+               ein_ind.push_back(j);
                ein.push_back(a);
             }
             if (pdg == 11 && ks == 1)
             {
                TLorentzVector b(px, py, pz, e);
-	       eout_ind.push_back(j);
+               eout_ind.push_back(j);
                eout.push_back(b);
             }
             if (eta < -1.5 || eta > 2.0)
@@ -227,11 +226,14 @@ std::vector<int> eout_ind;
             if (!found)
             {
                //cout << "not listed pdg id: " << pdg << endl;
-bool listed=false;
-for (int m = 0; m < notlisted.size();m++){
-if(notlisted[m]==pdg) listed=true;
-}
-if(!listed)notlisted.push_back(pdg);
+               bool listed = false;
+               for (int m = 0; m < notlisted.size(); m++)
+               {
+                  if (notlisted[m] == pdg)
+                     listed = true;
+               }
+               if (!listed)
+                  notlisted.push_back(pdg);
                continue;
             }
             if (!charged)
@@ -245,10 +247,10 @@ if(!listed)notlisted.push_back(pdg);
             //highestPt = particle->GetPt();
             //} // if
          } // for
-         multP->Fill(counter);
-bool scattered = false;
-std::vector<int> wrong;
-std::vector<double> wrongval;
+         bool scattered = false;
+         int scattered_ind = -1;
+         std::vector<int> wrong;
+         std::vector<double> wrongval;
          for (int k = 0; k < ein.size(); k++)
          {
             for (int l = 0; l < eout.size(); l++)
@@ -260,27 +262,39 @@ std::vector<double> wrongval;
                   cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                   cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                }
-		if (round(q2)==round(q2val)) {
-               Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
-scattered = true;
-}
-else {wrong.push_back(k);
-wrong.push_back(l);
-wrongval.push_back(q2val);
-}
+               if (round(q2) == round(q2val))
+               {
+                  Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
+                  scattered = true;
+                  scattered_ind = l;
+               }
+               else
+               {
+                  wrong.push_back(k);
+                  wrong.push_back(l);
+                  wrongval.push_back(q2val);
+               }
             }
          }
-if(!scattered){cout << "in size: " << ein.size() << "; out size: " << eout.size() << endl;
-for (int nn = 0; nn < wrongval.size(); nn++){
-const Particle* par1 = event->GetTrack(ein_ind[wrong[2*nn]]);
-const Particle* par2 = event->GetTrack(eout_ind[wrong[2*nn+1]]);
-cout << "part 1: pdgid: " << par1->GetPdgCode() << "; Status: " << par1->GetStatus() << "; momentum: (" << par1->GetE() << "," << par1->GetPx() << "," << par1->GetPy() << "," << par1->GetPz() << ")" << endl;
-cout << "part 2: pdgid: " << par2->GetPdgCode() << "; Status: " << par2->GetStatus() << "; momentum: (" << par2->GetE() << "," << par2->GetPx() << "," << par2->GetPy() << "," << par2->GetPz() << ")" << endl;
-cout << "Q2: " << q2 << "; q2 eval: " << wrongval[nn] << endl;
+         if (!scattered)
+         {
+            cout << "in size: " << ein.size() << "; out size: " << eout.size() << endl;
+            for (int nn = 0; nn < wrongval.size(); nn++)
+            {
+               const Particle *par1 = event->GetTrack(ein_ind[wrong[2 * nn]]);
+               const Particle *par2 = event->GetTrack(eout_ind[wrong[2 * nn + 1]]);
+               cout << "part 1: pdgid: " << par1->GetPdgCode() << "; Status: " << par1->GetStatus() << "; momentum: (" << par1->GetE() << "," << par1->GetPx() << "," << par1->GetPy() << "," << par1->GetPz() << ")" << endl;
+               cout << "part 2: pdgid: " << par2->GetPdgCode() << "; Status: " << par2->GetStatus() << "; momentum: (" << par2->GetE() << "," << par2->GetPx() << "," << par2->GetPy() << "," << par2->GetPz() << ")" << endl;
+               cout << "Q2: " << q2 << "; q2 eval: " << wrongval[nn] << endl;
 
-return;
-}
-}
+               return;
+            }
+         }
+         const Particle* part_sc = event->GetTrack(scattered_ind);
+         if (scattered_ind->GetE()< 10) continue;
+         if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
+         multP->Fill(counter);
+         Q2P->Fill(q2);
          if (debug)
             cout << "Event " << i << " finished processing"
                  << "; This is the " << nev << "-th event passing Q2 processed" << endl
@@ -302,11 +316,12 @@ return;
       cout << "passed Q2: " << nev << endl;
       cout << "not passed Q2 " << ievnn << endl;
 
-cout << "--------------------------------------------------------------------------------------" << endl;
-cout << "not listed pdg: " << endl;
-for (int m = 0; m <notlisted.size(); m++){
-cout << notlisted[m] << endl;
-}
+      cout << "--------------------------------------------------------------------------------------" << endl;
+      cout << "not listed pdg: " << endl;
+      for (int m = 0; m < notlisted.size(); m++)
+      {
+         cout << notlisted[m] << endl;
+      }
    }
    else
       nEvents = 1e7;
@@ -363,7 +378,7 @@ cout << notlisted[m] << endl;
    c0->SetLogx();
    c0->SaveAs(Form("%s_q2.pdf", outname.c_str()));
 
-   h1 = thePad->DrawFrame(1,1,Q2_max,Q2_max);
+   h1 = thePad->DrawFrame(1, 1, Q2_max, Q2_max);
    h1->SetXTitle("Q^{2} Values");
    h1->SetYTitle("Measured Q^{2} values");
    h1->SetZTitle("Normalized Counts per Event");
@@ -372,7 +387,7 @@ cout << notlisted[m] << endl;
    c0->SetLogy();
    c0->SetLogx();
 
-   c0->SaveAs(Form("%s_q2e.pdf",outname.c_str()));
+   c0->SaveAs(Form("%s_q2e.pdf", outname.c_str()));
    //ptHist.Draw();
    //canvas.Print("pt.png" );
 }

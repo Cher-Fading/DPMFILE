@@ -90,8 +90,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       outname += "_debug";
    cout << "Name: " << outname << endl;
    TFile *fout;
-   TH1F *multP, *Q2P;
+   TH1F *multP, *Q2P, *Q2Pa, *Q2Pb, *Q2Pc;
    TH2F *Q2E;
+   THStack* s;
    //TH1::AddDirectory(kFALSE);
    if (!replot)
    {
@@ -111,6 +112,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
       Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
+      multa = hotTH1F("Q2_1", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
+      multb = hotTH1F("Q2_1_neg", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
+      multc = hotTH1F("Q2_1001", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
 
       Q2E = new TH2F("Q2E", "Heatmap of Electron momentum vs Q2", 30, q2_bins, 30, q2_bins);
       Q2E->GetXaxis()->SetTitle("Q^{2}");
@@ -130,6 +134,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       for (int i(0); i < nEvents; ++i)
       {
          int counter = 0;
+         int countera = 0;
+         int counterb = 0;
+         int counterc = 0;
          std::vector<TLorentzVector> ein;
          std::vector<TLorentzVector> eout;
          std::vector<int> ein_ind;
@@ -241,6 +248,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
 
             //ptHist.Fill(particle->GetPt());
             counter++;
+            if (ks==1) countera++;
+            if (ks==-1) counterb++;
+            if (ks==1001) counterc++;
             // Update the highest pT:
             //if(particle->GetPt() > highestPt ) {
             //highestPt = particle->GetPt();
@@ -294,6 +304,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
          nev++;
          multP->Fill(counter);
+         multa->Fill(countera);
+         multb->Fill(counterb);
+         multc->Fill(counterc);
          Q2P->Fill(q2);
          if (debug)
             cout << "Event " << i << " finished processing"
@@ -310,6 +323,15 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       Q2P->SetMarkerSize(1);
       Q2E->SetMarkerSize(1);
       Q2E->Write();
+      s = new THStack("s","");
+multa->SetFillColor(kBlack);
+multb->SetFillColor(kBlue);
+multc->SetFillColor(kMagenta);
+s->Add(Q2Pa);
+s->Add(Q2Pb);
+s->Add(Q2Pc);
+
+s->Write();
       fout->Close();
 
       cout << "---------------------------------------------------------------------------------" << endl;
@@ -359,6 +381,21 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    c0->SetLogy();
    c0->SaveAs(Form("%s_mult.pdf", outname.c_str()));
 
+///////////////////////////
+h1->Draw();
+if (replot)
+{
+   fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
+      s = (THStack *)fout->Get("s");
+
+      multP->SetDirectory(0);
+
+      fout->Close();
+}
+s->Draw("SAME");
+c0->SetLogy();
+c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
+
    h1 = thePad->DrawFrame(1, 1e2, Q2_max, nEvents);
    h1->SetXTitle("Q^{2} (GeV^{2})");
    h1->SetYTitle("dN/dQ^{2} (GeV^{2})");
@@ -371,7 +408,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       fout->Close();
    }
    Q2P->SetMarkerSize(1);
-   gStyle->SetErrorX(0);
+   //gStyle->SetErrorX(0);
    Q2P->Draw("SAME");
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
 

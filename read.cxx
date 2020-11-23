@@ -369,6 +369,8 @@ s->Write();
 
       fout->Close();
    }
+   multP->SetMarkerStyle(21);
+   multP->SetMarkerSize(1);
    multP->Draw("SAME");
 
    //multP_2->Draw("SAME");
@@ -388,7 +390,7 @@ if (replot)
    fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
       s = (THStack *)fout->Get("s");
 
-      multP->SetDirectory(0);
+      s->SetDirectory(0);
 
       fout->Close();
 }
@@ -408,8 +410,19 @@ c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
       fout->Close();
    }
    Q2P->SetMarkerSize(1);
+   Q2P->SetMarkerStyle(21);
    //gStyle->SetErrorX(0);
-   Q2P->Draw("SAME");
+   Q2P->Draw("SAME HIST P");
+   for (int i = 1; i < 31; i++){
+      double y = Q2P->GetBinContent(i);
+      double x = Q2P->GetXaxis()->GetBinCenter(i);
+      TLine* lx = new TLine(q2_bins[i-1],y,q2_bins[i],y);
+      TLine* ly = new TLine(x,y-Q2P->GetBinErrorLow(i),x,y+Q2P->GetBinErrorUp(i));
+      lx->SetLineColor(kRed);
+      ly->SetLineColor(kRed);
+      lx->Draw("SAME");
+      ly->Draw("SAME");
+   }
    //Q2P->Scale(1./Q2P->GetSumOfWeights());
 
    c0->SetLogx();

@@ -73,7 +73,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          cout << q2_bins[i] << "; ";
       initial = initial + incre;
    }
-if (debug) cout << endl;
+   if (debug)
+      cout << endl;
 
    TChain tree("EICTree");
 
@@ -100,8 +101,8 @@ if (debug) cout << endl;
       // EventPythia, EventPepsi, EventRapgap, EventDjangoh, EventMilou.
       // If you only need shared quantities like x, Q2 and the particle list
       // you can use EventBase and the macro will be general for any Monte Carlo.
-      erhic::EventPythia *event(NULL); // = new EventPythia;
-                                       // EventBase* event(NULL)
+      erhic::EventPythia *event(NULL);        // = new EventPythia;
+                                              // EventBase* event(NULL)
       tree.SetBranchAddress("event", &event); // Note &event, not event.
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
@@ -120,8 +121,8 @@ if (debug) cout << endl;
       cout << "nEvents: " << nEvents << endl;
       int nev = 0;
       int ievnn = 0;
-cout << "Start event looping......" << endl;
-cout << "-----------------------------------------------------------------------------------------------------" << endl;
+      cout << "Start event looping......" << endl;
+      cout << "-----------------------------------------------------------------------------------------------------" << endl;
       for (int i(0); i < nEvents; ++i)
       {
          int counter = 0;
@@ -132,17 +133,19 @@ cout << "-----------------------------------------------------------------------
          int nParticles = event->GetNTracks();
          if (i % 10000 == 0)
             cout << "processing event " << i << " with particles " << nParticles << endl;
-         //Q2 cut         
+         //Q2 cut
 
          double q2 = event->GetQ2();
-if (debug)
+         if (debug)
             cout << "Q2: " << q2 << endl;
 
          Q2P->Fill(q2);
          if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > 1e4))
          {
             ievnn++;
-	if (debug && passedlim==0) cout << "Event " << i << " finished processing. " << endl << endl;
+            if (debug && passedlim == 0)
+               cout << "Event " << i << " finished processing. " << endl
+                    << endl;
             continue;
          }
          nev++;
@@ -214,9 +217,10 @@ if (debug)
             if (debug)
                cout << "found? " << found << "; charged? " << charged << endl;
             if (!found)
-               {cout << "not listed pdg id: " << pdg << endl;
-continue;
-}
+            {
+               cout << "not listed pdg id: " << pdg << endl;
+               continue;
+            }
             if (!charged)
                continue;
             //if(abs(pdg) != 211 ) continue;
@@ -243,9 +247,13 @@ continue;
                }
             }
          }
-	if (debug)  cout << "Event " << i << " finished processing" << "; This is the " << nev << "-th event passing Q2 processed" << endl << endl;
+         if (debug)
+            cout << "Event " << i << " finished processing"
+                 << "; This is the " << nev << "-th event passing Q2 processed" << endl
+                 << endl;
 
-if (nev>=passedlim) break;
+         if (nev >= passedlim)
+            break;
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
@@ -315,6 +323,16 @@ if (nev>=passedlim) break;
    c0->SetLogx();
    c0->SaveAs(Form("%s_q2.pdf", outname.c_str()));
 
+   h1 = thePad->DrawFrame(1,1,Q2_max,Q2_max);
+   h1->SetXTitle("Q^{2} Values");
+   h1->SetYTitle("Measured Q^{2} values");
+   h1->SetZTitle("Normalized Counts per Event")
+   h1->Draw();
+   Q2E->Draw("colz, SAME");
+   c0->SetLogy();
+   c0->SetLogx();
+
+   c0->SaveAs(Form("%s_q2e.pdf",outname.c_str()));
    //ptHist.Draw();
    //canvas.Print("pt.png" );
 }

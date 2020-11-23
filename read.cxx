@@ -49,7 +49,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0)
+void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0,std::string name = "")
 {
 
    // If the analysis solely uses TTree::Draw statements,
@@ -88,12 +88,13 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    std::string outname = inname.substr(inname.find_last_of("/", inname.rfind("/") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.rfind("/") - 1) - 1);
    if (debug)
       outname += "_debug";
+outname += name;
    cout << "Name: " << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P, *multa, *multb, *multc;
    TH2F *Q2E;
    THStack* s;
-   //TH1::AddDirectory(kFALSE);
+   TH1::AddDirectory(kFALSE);
    if (!replot)
    {
       tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -318,10 +319,11 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
-      Q2P->Write();
+      
       multP->Write();
       Q2P->SetMarkerSize(1);
       Q2E->SetMarkerSize(1);
+Q2P->Write();
       Q2E->Write();
       s = new THStack("s","");
 multa->SetFillColor(kBlack);
@@ -373,7 +375,7 @@ s->Write();
    }
    multP->SetMarkerStyle(21);
    multP->SetMarkerSize(1);
-   multP->Draw("SAME");
+   multP->Draw("SAME P");
 
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
@@ -392,11 +394,11 @@ if (replot)
    fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
       s = (THStack *)fout->Get("s");
 
-      s->SetDirectory(0);
+      //s->SetDirectory(0);
 
       fout->Close();
 }
-s->Draw("SAME");
+s->Draw("hist");
 c0->SetLogy();
 c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
 
@@ -435,6 +437,13 @@ c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
    h1->SetYTitle("Measured Q^{2} values");
    h1->SetZTitle("Normalized Counts per Event");
    h1->Draw();
+if (replot)
+   {
+      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
+      Q2E = (TH2F *)fout->Get("Q2E");
+      Q2E->SetDirectory(0);
+      fout->Close();
+   }
    Q2E->Draw("colz, SAME");
    c0->SetLogy();
    c0->SetLogx();

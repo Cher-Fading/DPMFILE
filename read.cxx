@@ -43,8 +43,9 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           0, -1, 0, 0, 1,
                           1, 1, 0, 1, 0,
                           1};
-//root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)'
-void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false)
+//root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
+//root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
+void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0)
 {
 
    // If the analysis solely uses TTree::Draw statements,
@@ -69,9 +70,10 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    {
       q2_bins[i] = TMath::Power(TMath::E(), initial);
       if (debug)
-         cout << q2_bins[i] << endl;
+         cout << q2_bins[i] << "; ";
       initial = initial + incre;
    }
+if (debug) cout << endl;
 
    TChain tree("EICTree");
 
@@ -81,7 +83,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    std::string outname = inname.substr(inname.find_last_of("/", inname.rfind("/") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.rfind("/") - 1) - 1);
    if (debug)
       outname += "_debug";
-   cout << outname << endl;
+   cout << "Name: " << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P;
    TH2F *Q2E;
@@ -114,28 +116,33 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       // Loop over events:
       if (nEvents == 0)
          nEvents = tree.GetEntries();
+
       cout << "nEvents: " << nEvents << endl;
-      if (debug && nEvents > 100)
-         nEvents = 5;
       int nev = 0;
       int ievnn = 0;
+cout << "Start event looping......" << endl;
+cout << "-----------------------------------------------------------------------------------------------------" << endl;
       for (int i(0); i < nEvents; ++i)
       {
-
+         int counter = 0;
+         std::vector<TLorentzVector> ein;
+         std::vector<TLorentzVector> eout;
          // Read the next entry from the tree.
          tree.GetEntry(i);
-         if (debug)
-            cout << "Q2: " << event->GetQ2() << endl
-                 << endl;
          int nParticles = event->GetNTracks();
          if (i % 10000 == 0)
             cout << "processing event " << i << " with particles " << nParticles << endl;
-         //Q2 cut
+         //Q2 cut         
+
          double q2 = event->GetQ2();
+if (debug)
+            cout << "Q2: " << q2 << endl;
+
          Q2P->Fill(q2);
          if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > 1e4))
          {
             ievnn++;
+	if (debug && passedlim==0) cout << "Event " << i << " finished processing. " << endl << endl;
             continue;
          }
          nev++;
@@ -146,9 +153,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          //cout << nParticles << endl;
          // We now know the number of particles in the event, so loop over
          // the particles:
-         int counter = 0;
-         std::vector<TLorentzVector> ein;
-         std::vector<TLorentzVector> eout;
+
          for (int j(0); j < nParticles; ++j)
          {
             //const erhic::ParticleMCeA* particleeA = (erhic::ParticleMCeA*)event->GetTrack(j);
@@ -209,8 +214,10 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             if (debug)
                cout << "found? " << found << "; charged? " << charged << endl;
             if (!found)
-               cout << "not listed pdg id: " << pdg << endl;
-            if (!charged && debug)
+               {cout << "not listed pdg id: " << pdg << endl;
+continue;
+}
+            if (!charged)
                continue;
             //if(abs(pdg) != 211 ) continue;
 
@@ -236,6 +243,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
                }
             }
          }
+	if (debug)  cout << "Event " << i << " finished processing" << "; This is the " << nev << "-th event passing Q2 processed" << endl << endl;
+
+if (nev>=passedlim) break;
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
@@ -246,7 +256,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       Q2E->Write();
       fout->Close();
 
-      cout << "passed Q2" << nev << endl;
+      cout << "---------------------------------------------------------------------------------" << endl;
+      cout << "passed Q2: " << nev << endl;
       cout << "not passed Q2 " << ievnn << endl;
    }
    else

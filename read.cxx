@@ -49,7 +49,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
                           1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0,std::string name = "")
+void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0, std::string = "")
 {
 
    // If the analysis solely uses TTree::Draw statements,
@@ -88,13 +88,12 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    std::string outname = inname.substr(inname.find_last_of("/", inname.rfind("/") - 1) + 1, inname.rfind("/") - inname.find_last_of("/", inname.rfind("/") - 1) - 1);
    if (debug)
       outname += "_debug";
-outname += name;
    cout << "Name: " << outname << endl;
    TFile *fout;
    TH1F *multP, *Q2P, *multa, *multb, *multc;
    TH2F *Q2E;
-   THStack* s;
-   TH1::AddDirectory(kFALSE);
+   THStack *s;
+   //TH1::AddDirectory(kFALSE);
    if (!replot)
    {
       tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -113,9 +112,9 @@ outname += name;
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
       Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
-      multa = hotTH1F("multa", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
-      multb = hotTH1F("multb", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
-      multc = hotTH1F("multc", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
+      multa = hotTH1F("Q2_1", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
+      multb = hotTH1F("Q2_1_neg", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
+      multc = hotTH1F("Q2_1001", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
 
       Q2E = new TH2F("Q2E", "Heatmap of Electron momentum vs Q2", 30, q2_bins, 30, q2_bins);
       Q2E->GetXaxis()->SetTitle("Q^{2}");
@@ -249,9 +248,12 @@ outname += name;
 
             //ptHist.Fill(particle->GetPt());
             counter++;
-            if (ks==1) countera++;
-            if (ks==-1) counterb++;
-            if (ks==1001) counterc++;
+            if (ks == 1)
+               countera++;
+            if (ks == -1)
+               counterb++;
+            if (ks == 1001)
+               counterc++;
             // Update the highest pT:
             //if(particle->GetPt() > highestPt ) {
             //highestPt = particle->GetPt();
@@ -300,9 +302,17 @@ outname += name;
                return;
             }
          }
+<<<<<<< HEAD
          //const Particle* part_sc = event->GetTrack(scattered_ind);
          //if (part_sc->GetE()< 10) continue;
          //if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
+=======
+         const Particle *part_sc = event->GetTrack(scattered_ind);
+         if (part_sc->GetE() < 10)
+            continue;
+         if ((part_sc->GetE() - part_sc->GetPz()) < 47 || (part_sc->GetE() - part_sc->GetPz()) > 69)
+            continue;
+>>>>>>> 1bc9281fb504105982be98b5d1fb696448f531d3
          nev++;
          multP->Fill(counter);
          multa->Fill(countera);
@@ -319,23 +329,20 @@ outname += name;
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
       multP->SetMarkerSize(1);
-      
+      Q2P->Write();
       multP->Write();
       Q2P->SetMarkerSize(1);
       Q2E->SetMarkerSize(1);
-Q2P->Write();
       Q2E->Write();
-      s = new THStack("s","");
-multa->SetFillColor(kBlack);
-multb->SetFillColor(kBlue);
-multc->SetFillColor(kMagenta);
-s->Add(multa);
-s->Add(multb);
-s->Add(multc);
-multa->Write();
-multb->Write();
-multc->Write();
-s->Write();
+      s = new THStack("s", "");
+      multa->SetFillColor(kBlack);
+      multb->SetFillColor(kBlue);
+      multc->SetFillColor(kMagenta);
+      s->Add(multa);
+      s->Add(multb);
+      s->Add(multc);
+
+      s->Write();
       fout->Close();
 
       cout << "---------------------------------------------------------------------------------" << endl;
@@ -375,7 +382,7 @@ s->Write();
    }
    multP->SetMarkerStyle(21);
    multP->SetMarkerSize(1);
-   multP->Draw("SAME P");
+   multP->Draw("SAME");
 
    //multP_2->Draw("SAME");
    myMarkerText(0.4, 0.85, kRed, 21, "Particle Status = 1,-1,1001", 1.2, 0.04);
@@ -387,20 +394,20 @@ s->Write();
    c0->SetLogy();
    c0->SaveAs(Form("%s_mult.pdf", outname.c_str()));
 
-///////////////////////////
-h1->Draw();
-if (replot)
-{
-   fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
+   ///////////////////////////
+   h1->Draw();
+   if (replot)
+   {
+      fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
       s = (THStack *)fout->Get("s");
 
-      //s->SetDirectory(0);
+      s->SetDirectory(0);
 
       fout->Close();
-}
-s->Draw("hist");
-c0->SetLogy();
-c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
+   }
+   s->Draw("SAME");
+   c0->SetLogy();
+   c0->SaveAs(Form("%s_mult_abc.pdf", outname.c_str()));
 
    h1 = thePad->DrawFrame(1, 1e2, Q2_max, nEvents);
    h1->SetXTitle("Q^{2} (GeV^{2})");
@@ -417,11 +424,12 @@ c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
    Q2P->SetMarkerStyle(21);
    //gStyle->SetErrorX(0);
    Q2P->Draw("SAME HIST P");
-   for (int i = 1; i < 31; i++){
+   for (int i = 1; i < 31; i++)
+   {
       double y = Q2P->GetBinContent(i);
       double x = Q2P->GetXaxis()->GetBinCenter(i);
-      TLine* lx = new TLine(q2_bins[i-1],y,q2_bins[i],y);
-      TLine* ly = new TLine(x,y-Q2P->GetBinErrorLow(i),x,y+Q2P->GetBinErrorUp(i));
+      TLine *lx = new TLine(q2_bins[i - 1], y, q2_bins[i], y);
+      TLine *ly = new TLine(x, y - Q2P->GetBinErrorLow(i), x, y + Q2P->GetBinErrorUp(i));
       lx->SetLineColor(kRed);
       ly->SetLineColor(kRed);
       lx->Draw("SAME");
@@ -437,11 +445,11 @@ c0->SaveAs(Form("%s_mult_abc.pdf",outname.c_str()));
    h1->SetYTitle("Measured Q^{2} values");
    h1->SetZTitle("Normalized Counts per Event");
    h1->Draw();
-if (replot)
+   if (replot)
    {
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
-      Q2E = (TH2F *)fout->Get("Q2E");
-      Q2E->SetDirectory(0);
+      Q2E = (TH1F *)fout->Get("Q2E");
+      Q2P->SetDirectory(0);
       fout->Close();
    }
    Q2E->Draw("colz, SAME");

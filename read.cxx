@@ -327,9 +327,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
 multa->SetFillColor(kBlack);
 multb->SetFillColor(kBlue);
 multc->SetFillColor(kMagenta);
-s->Add(Q2Pa);
-s->Add(Q2Pb);
-s->Add(Q2Pc);
+s->Add(multa);
+s->Add(multb);
+s->Add(multc);
 
 s->Write();
       fout->Close();

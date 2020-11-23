@@ -34,15 +34,19 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 const int Q2_max = 1e3;
 const float Q2_cut = 5.;
 
-const int listn = 16;
+const int listn = 26;
 const int partl[listn] = {11, 13, 22, 81, 111,
                           130, 211, 310, 313, 321,
                           323, 411, 421, 431, 2112,
-                          2212};
+                          2212,3122,3222,3112,3212,
+			  3322,3312,4122,4132,4232,
+			  4212};
 const int charl[listn] = {-1, -1, 0, 0, 0,
                           0, -1, 0, 0, 1,
                           1, 1, 0, 1, 0,
-                          1};
+                          1,0,1,-1,0,
+			  0,-1,1,0,1,
+			  1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
 void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot = false, int passedlim = 0)
@@ -64,7 +68,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    int q2_min = 1;
    Float_t q2_bins[31];
    float initial = log(q2_min);
-   float incre = log(Q2_max / q2_min) / 30;
+   float incre = log(Q2_max / q2_min) / 30.;
 
    for (int i = 0; i < 31; i++)
    {
@@ -117,7 +121,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       // Loop over events:
       if (nEvents == 0)
          nEvents = tree.GetEntries();
-
+std::vector<int> notlisted;
       cout << "nEvents: " << nEvents << endl;
       int nev = 0;
       int ievnn = 0;
@@ -128,6 +132,8 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
          int counter = 0;
          std::vector<TLorentzVector> ein;
          std::vector<TLorentzVector> eout;
+std::vector<int> ein_ind;
+std::vector<int> eout_ind;
          // Read the next entry from the tree.
          tree.GetEntry(i);
          int nParticles = event->GetNTracks();
@@ -177,11 +183,13 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             if (pdg == 11 && ks == 21 && px == 0 && py == 0 && abs(pz) > 0)
             {
                TLorentzVector a(px, py, pz, e);
+	       ein_ind.push_back(j);
                ein.push_back(a);
             }
             if (pdg == 11 && ks == 1)
             {
                TLorentzVector b(px, py, pz, e);
+	       eout_ind.push_back(j);
                eout.push_back(b);
             }
             if (eta < -1.5 || eta > 2.0)
@@ -218,7 +226,12 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
                cout << "found? " << found << "; charged? " << charged << endl;
             if (!found)
             {
-               cout << "not listed pdg id: " << pdg << endl;
+               //cout << "not listed pdg id: " << pdg << endl;
+bool listed=false;
+for (int m = 0; m < notlisted.size();m++){
+if(notlisted[m]==pdg) listed=true;
+}
+if(!listed)notlisted.push_back(pdg);
                continue;
             }
             if (!charged)
@@ -233,26 +246,47 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
             //} // if
          } // for
          multP->Fill(counter);
-
+bool scattered = false;
+std::vector<int> wrong;
+std::vector<double> wrongval;
          for (int k = 0; k < ein.size(); k++)
          {
             for (int l = 0; l < eout.size(); l++)
             {
                double q2val = -(ein[k] - eout[l]) * (ein[k] - eout[l]);
-               Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
+
                if (debug)
                {
                   cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                   cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                }
+		if (round(q2)==round(q2val)) {
+               Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
+scattered = true;
+}
+else {wrong.push_back(k);
+wrong.push_back(l);
+wrongval.push_back(q2val);
+}
             }
          }
+if(!scattered){cout << "in size: " << ein.size() << "; out size: " << eout.size() << endl;
+for (int nn = 0; nn < wrongval.size(); nn++){
+const Particle* par1 = event->GetTrack(ein_ind[wrong[2*nn]]);
+const Particle* par2 = event->GetTrack(eout_ind[wrong[2*nn+1]]);
+cout << "part 1: pdgid: " << par1->GetPdgCode() << "; Status: " << par1->GetStatus() << "; momentum: (" << par1->GetE() << "," << par1->GetPx() << "," << par1->GetPy() << "," << par1->GetPz() << ")" << endl;
+cout << "part 2: pdgid: " << par2->GetPdgCode() << "; Status: " << par2->GetStatus() << "; momentum: (" << par2->GetE() << "," << par2->GetPx() << "," << par2->GetPy() << "," << par2->GetPz() << ")" << endl;
+cout << "Q2: " << q2 << "; q2 eval: " << wrongval[nn] << endl;
+
+return;
+}
+}
          if (debug)
             cout << "Event " << i << " finished processing"
                  << "; This is the " << nev << "-th event passing Q2 processed" << endl
                  << endl;
 
-         if (nev >= passedlim)
+         if (passedlim > 0 && nev >= passedlim)
             break;
       } // for
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "RECREATE");
@@ -267,6 +301,12 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       cout << "---------------------------------------------------------------------------------" << endl;
       cout << "passed Q2: " << nev << endl;
       cout << "not passed Q2 " << ievnn << endl;
+
+cout << "--------------------------------------------------------------------------------------" << endl;
+cout << "not listed pdg: " << endl;
+for (int m = 0; m <notlisted.size(); m++){
+cout << notlisted[m] << endl;
+}
    }
    else
       nEvents = 1e7;
@@ -326,7 +366,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    h1 = thePad->DrawFrame(1,1,Q2_max,Q2_max);
    h1->SetXTitle("Q^{2} Values");
    h1->SetYTitle("Measured Q^{2} values");
-   h1->SetZTitle("Normalized Counts per Event")
+   h1->SetZTitle("Normalized Counts per Event");
    h1->Draw();
    Q2E->Draw("colz, SAME");
    c0->SetLogy();

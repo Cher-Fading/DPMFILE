@@ -112,9 +112,9 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
       //TH1F* multP_2 = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30,0.5,30.5, "", "", kBlue, 0.3, 21, 1, false);//status = -1 & 1
       Q2P = hotTH1F("Q2", "dN/dQ2 vs Q2", 30, q2_bins, "", "", kRed, 0.3, 21, 1, true);
-      multa = hotTH1F("Q2_1", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
-      multb = hotTH1F("Q2_1_neg", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
-      multc = hotTH1F("Q2_1001", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
+      multa = hotTH1F("multa", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
+      multb = hotTH1F("multb", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
+      multc = hotTH1F("multc", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
 
       Q2E = new TH2F("Q2E", "Heatmap of Electron momentum vs Q2", 30, q2_bins, 30, q2_bins);
       Q2E->GetXaxis()->SetTitle("Q^{2}");
@@ -330,7 +330,9 @@ multc->SetFillColor(kMagenta);
 s->Add(multa);
 s->Add(multb);
 s->Add(multc);
-
+multa->Write();
+multb->Write();
+multc->Write();
 s->Write();
       fout->Close();
 

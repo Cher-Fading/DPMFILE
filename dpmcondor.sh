@@ -17,11 +17,11 @@ echo $(ls)
 output=$((21 + $B))
 echo output $output round $A queue $2
 
-if [ "$((13-$2%20))" -eq "4" ]
-then
-echo "problematic random seed, exiting"
-exit 1
-fi
+#if [ "$((13-$2%20))" -eq "4" ]
+#then
+#echo "problematic random seed, exiting"
+#exit 1
+#fi
 
 TAB=$'\t'
 sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/$1/$A/$1_$2.inp

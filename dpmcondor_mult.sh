@@ -3,6 +3,7 @@
 #./dpmcondor_mult.sh ep_HERA4 4000 1E4 200
 cd /sphenix/u/xwang97/DPMFILE
 C=$(($2/$4))
+echo $C
 #use a different condorjob for each batch of $400 simulations
 for ((i=1;i<=C;i++))
 do

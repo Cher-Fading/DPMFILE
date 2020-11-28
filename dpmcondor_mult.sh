@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#./dpmcondor_mult.sh
+#./dpmcondor_mult.sh ep_HERA4 4000 1E4 200
 cd /sphenix/u/xwang97/DPMFILE
 C=$(($2/$4))
 #use a different condorjob for each batch of $400 simulations
@@ -15,7 +15,7 @@ chmod +x /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i.sh
 cp /sphenix/u/xwang97/DPMFILE/dpmCondor.condor /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 sed -i "s/^Executable.*/Executable   = /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i.sh" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 sed -i "s/^Queue.*/Queue $4" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
-sed -i "s/^Arguments.*/Arguments       = $1$i $(Process) 1E4" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
+sed -i "s/^Arguments.*/Arguments       = $1$i $(Process) $3" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 
 cp /gpfs/mnt/gpfs02/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/$1.inp /gpfs/mnt/gpfs02/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/$1$i.inp

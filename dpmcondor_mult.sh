@@ -14,7 +14,8 @@ sed -i "s/^NUM.*/NUM=\$((\$2+${VAL}))/" /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i
 cat /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i.sh
 chmod +x /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i.sh
 cp /sphenix/u/xwang97/DPMFILE/dpmCondor.condor /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
-sed -i "s/.*dpmcondor.sh.*/.*dpmcondor${1}${i}.sh/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
+des="/sphenix/u/xwang97/DPMFILE/"
+sed -i "s/^Executable.*/Executable   = $des\dpmcondor${1}${i}.sh/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 sed -i "s/^Queue.*/Queue ${4}/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 sed -i "s/^Arguments.*/Arguments       = ${1}${i} \$(Process) ${3}/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor

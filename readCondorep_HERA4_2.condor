@@ -1,0 +1,83 @@
+# All local jobs are part of the vanilla universe.
+Universe        = vanilla
+# x509userproxy = $ENV(X509_USER_PROXY)
+
+# We want email if the job completed successfully. This can
+# be set to Always, Error, or Never.
+Notification    = Never
+
+# The executable we want to run.
+#Executable   = /usatlas/u/cher97/FTFAX/FTFAXCondor.sh
+Executable   = /sphenix/u/xwang97/DPMFILE/readcondor.sh
+
+# The argument to pass to the executable.
+## first argument  - input cards
+## second argument - process number
+# third argument - number of events per sample
+Arguments       = ep_HERA4_2 $(Process) 1E4
+
+# The requirement line specifies which machines we want to
+# run this job on.  Any arbitrary classad expression can
+# be used.
+# Requirements    = CPU_Speed >= 1
+Requirements = CPU_Speed >= 1 && CPU_Experiment != "atlas"
+
+# Rank is an expression that states how to rank machines which 
+# have already met the requirements expression.  Essentially, 
+# rank expresses preference.  A higher numeric value equals better 
+# rank.  Condor will give the job the machine with the highest rank.
+Rank		= CPU_Speed
+
+# This tells Condor the maximum virtual image size to which
+# you believe your program will grow during its execution.
+###Image_Size      = 428 Meg
+Image_Size      = 1100M
+
+# Jobs with higher numerical priority will run before jobs 
+# with lower numerical priority (-20 to 20).
+Priority        = +20
+
+#Chris would hate me for this
+GetEnv          = True
+
+# Used to give jobs a directory with respect to file input 
+# and output.
+Initialdir   = /sphenix/u/xwang97/DPMFILE
+
+# Input file given to the job.
+Input           = /dev/null
+
+# The job's stdout is sent to this file.
+Output       = /sphenix/u/xwang97/logFiles/out.$(Process)
+#Output       = /tmp/timrinn/out.$(Process)
+
+# The job's stderr is sent to this file.
+Error      = /sphenix/u/xwang97/logFiles/err.$(Process)
+#Error      = /tmp/timrinn/err.$(Process)
+
+# The condor log file for this job, useful when debugging.
+Log       =  /sphenix/u/xwang97/logFiles/log.$(Process)
+#Log       =  /tmp/timrinn/log.$(Process)
+# Email address to send notification to.
+###Notify_user     = trinn@iastate.edu
+
+# add hold to resolve eviction problems
+#PeriodicHold = (NumJobStarts>=1 && JobStatus == 1)
+
+# require phenix hardware
+#Requirements    = (CPU_Speed >= 1)
+
+# These are job flags which are non-Condor specific.
+# The "Experiment" flag should be set to the user's experiment:
+# star, phobos, phenix, brahms, atlas, etc.
++Experiment     = "eic"
+
+# Since this is an analysis job we set this to "cas".
++Job_Type       = "cas"
+
+# accounting_group = group_atlas.uillu
++NewQueue      = True
+ 
+Queue 180
+
+

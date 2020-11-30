@@ -302,17 +302,11 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
                return;
             }
          }
-<<<<<<< HEAD
-         //const Particle* part_sc = event->GetTrack(scattered_ind);
-         //if (part_sc->GetE()< 10) continue;
-         //if ((part_sc->GetE()-part_sc->GetPz())<47 || (part_sc->GetE()-part_sc->GetPz())>69) continue;
-=======
          const Particle *part_sc = event->GetTrack(scattered_ind);
          if (part_sc->GetE() < 10)
             continue;
          if ((part_sc->GetE() - part_sc->GetPz()) < 47 || (part_sc->GetE() - part_sc->GetPz()) > 69)
             continue;
->>>>>>> 1bc9281fb504105982be98b5d1fb696448f531d3
          nev++;
          multP->Fill(counter);
          multa->Fill(countera);

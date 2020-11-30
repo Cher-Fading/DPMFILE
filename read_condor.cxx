@@ -70,7 +70,7 @@ void read(TString filename, int nEvents = 0, bool debug = false, int passedlim =
     // We could add multiple files if we wanted.
     std::string inname = inFileNames.Data();
     std::string outname;
-    /*std::string jobname;
+    std::string jobname;
    int condorbatch;
    int jobnum;
    int evtnb
@@ -78,8 +78,8 @@ void read(TString filename, int nEvents = 0, bool debug = false, int passedlim =
    if (!parser){
        cout << "parising failed" << endl;
        return;
-   }*/
-   outname = inname.substr(inname.rfind("fort_")+5,inname.rfind(".root")-inname.rfind)("fort_")-5)+"_result"+name;
+   }
+   outname = "/sphenix/user/xwang97/DPMJET/"+jobnum+"_"+std::to_string(condorbatch)+"/"+jobnum+"_"+std::to_string(condorbatch)+"_"+std::to_string(jobnum)+"_"+std::to_string(evtnb)+"_result"+name;
    cout << outname << endl;
    return;
    if (debug)

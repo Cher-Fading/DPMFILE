@@ -72,18 +72,18 @@ void read(TString filename, int nEvents = 0, bool debug = false, int passedlim =
 
     // Add the file(s) we want to analyse to the chain.
     // We could add multiple files if we wanted.
-    std::string inname = inFileNames.Data();
+    std::string inname = filename.Data();
     std::string outname;
     std::string jobname;
    int condorbatch;
    int jobnum;
-   int evtnb
+   int evtnb;
    bool parser = filenameparser(inname, condorbatch, jobnum, evtnb, jobname);
    if (!parser){
        cout << "parising failed" << endl;
        return;
    }
-   outname = "/sphenix/user/xwang97/DPMJET/"+jobnum+"_"+std::to_string(condorbatch)+"/"+jobnum+"_"+std::to_string(condorbatch)+"_"+std::to_string(jobnum)+"_"+std::to_string(evtnb)+"_result"+name;
+   outname = "/sphenix/user/xwang97/DPMJET/"+jobname+"_"+std::to_string(condorbatch)+"/"+jobname+"_"+std::to_string(condorbatch)+std::to_string(jobnum)+"_"+std::to_string(evtnb)+"_result"+name;
    cout << outname << endl;
    return;
    if (debug)

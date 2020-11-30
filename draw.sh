@@ -3,8 +3,9 @@
 cd /sphenix/user/xwang97/DPMJET/
 #use a different condorjob for each batch of $400 simulations
 for ((i = 1; i <= $3; i++)); do
-    hadd $1_$i/$1_$i_$2_result$4.root $1_$i/$1_$i_*_result$4.root
+echo $1_${i}_$2_result$4.root
+    hadd -f $1_${i}_$2_result$4.root $1_${i}/$1_${i}_*_result$4.root
     #cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
     #condor_submit /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
 done
-hadd $1_$2_result$4.root $1_$i/$1_$i_$2_result$4.root
+hadd $1_$2_result$4.root $1_*_$2_result$4.root

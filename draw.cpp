@@ -16,8 +16,8 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 
 void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut")
 {
-    std::string batch = batchmode ? Form("_batch_%d", bacthes) : "";
-    TFile *f1 = TFile::Open(Form("%s%s_%s_result%s.root", jobname, batch, evtnb, label), "READ");
+    std::string batch = batchmode ? Form("_batch_%d", batches) : "";
+    TFile *f1 = TFile::Open(Form("/sphenix/user/xwang97/DPMJET/%s%s_%s_result%s.root", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()), "READ");
     TH1::AddDirectory(kFALSE);
     TH1F *a1 = (TH1F *)f1->Get("Q2");
     TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
@@ -59,7 +59,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     myText(0.4, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
     myText(0.4, 0.5, kBlack, Form("Number of Events: %d", entries));
 
-    c0->SaveAs(Form("%s%s_%s_%s_q2.pdf", jobname, batch, evtnb, label));
+    c0->SaveAs(Form("%s%s_%s_q2%s.pdf", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
     a1 = (TH1F *)f1->Get("Multi");
     h0 = (TH1F *)p0->DrawFrame(0, 1, 30, 2e7);
@@ -98,5 +98,5 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
             ly1->Draw("SAME");
     }
 
-    c0->SaveAs(Form("%s%s_%s_%s_mult.pdf", jobname, batch, evtnb, label));
+    c0->SaveAs(Form("%s%s_%s_multi%s.pdf", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 }

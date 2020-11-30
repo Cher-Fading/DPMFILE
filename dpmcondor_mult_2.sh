@@ -5,7 +5,7 @@ cd /sphenix/u/xwang97/DPMFILE
 C=$(($2/$4))
 echo $C
 #use a different condorjob for each batch of $400 simulations
-for ((i=1;i<=C;i++))
+for ((i=21;i<=(20+C);i++))
 do
 VAL=$(($i*$4))
 mkdir -p /sphenix/user/xwang97/DPMJET/$1_$i/

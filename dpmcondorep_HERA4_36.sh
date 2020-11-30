@@ -2,7 +2,7 @@
 cd /sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/
 A=$(($2/79))
 B=$(($2%79)) #use modulo to have more files
-NUM=$2
+NUM=$(($2+7200))
 mkdir -p /sphenix/user/xwang97/DPMJET/$1/$A/$B
 cp $1.inp /sphenix/user/xwang97/DPMJET/$1/$1_$2.inp
 cd /sphenix/user/xwang97/DPMJET/$1/$A/

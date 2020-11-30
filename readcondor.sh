@@ -5,6 +5,7 @@ if [ $4 == "true" ]; then
 input="/sphenix/user/xwang97/DPMJET/$1_$2/$1_$2_files.txt"
 else
 input = "/sphenix/user/xwang97/DPMJET/$1/$1_files.txt"
+fi
 
 #indexline=$1
 linenumber=0

@@ -89,7 +89,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     TH1F *multP, *Q2P, *multa, *multb, *multc;
     TH2F *Q2E;
     THStack *s;
-    std::ofstream statout(Form("%s_result.txt", outname.c_str()));
+    
     //TH1::AddDirectory(kFALSE);
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -97,6 +97,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     int nentries = tree.GetEntries();
     outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
     cout << outname << endl;
+    std::ofstream statout(Form("%s_result.txt", outname.c_str()));
     return;
     if (debug)
         outname += "_debug";

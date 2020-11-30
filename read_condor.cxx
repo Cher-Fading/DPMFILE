@@ -94,7 +94,12 @@ void read(TString filename, int nEvents = 0, bool debug = false, int passedlim =
 
    tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
                        // tree.Add(/path/to/otherFileNames ); // etc...
-
+                       int nentries = tree.GetEntries();
+                       if(nentries==0) {
+                           statout << "tot: " << 0 << endl;
+                           statout.close();
+                           return;
+                       }
    // Create an object to store the current event from the tree.
    // This is how we access the values in the tree.
    // If you want to use generator-specific values, then
@@ -121,8 +126,8 @@ void read(TString filename, int nEvents = 0, bool debug = false, int passedlim =
    // Loop over events:
    if (nEvents == 0)
    {
-       nEvents = tree.GetEntries();
-       statout << "tot: " << nEvents << endl;
+       nEvents = nentries;
+       statout << "tot: " << nentries << endl;
    }
    std::vector<int> notlisted;
    cout << "nEvents: " << nEvents << endl;

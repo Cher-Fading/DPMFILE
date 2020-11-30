@@ -19,7 +19,7 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
     int En = filename.rfind("E", ending - 1);
     std::string Es = filename.substr(En + 1, ending - En - 1);
     int E = std::stoi(Es);
-    if (!E >= 0)
+    if (!(E >= 0))
     {
         cout << "[ERROR] Wrong power: " << Es << endl;
         return false;
@@ -28,13 +28,13 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
     int last_ = filename.rfind("_", ending - 1);
     std::string Eds = filename.substr(last_ + 1, En - last_ - 1);
     int Ed = std::stoi(Eds);
-    if (!Ed >= 0)
+    if (!(Ed >= 0))
     {
         cout << "[ERROR] Wrong digit: " << Eds << endl;
         return false;
     }
     evtnb = Ed * pow(10, E);
-    if (!evtnb >= 0)
+    if (!(evtnb >= 0))
     {
         cout << "[ERROR] Wrong event number: " << Eds << "*" << Es << endl;
         return false;
@@ -43,7 +43,7 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
     int seclast_ = filename.rfind("_", last_ - 1);
     std::string jobnums = filename.substr(seclast_ + 1, last_ - seclast_ - 1);
     jobnum = std::stoi(jobnums);
-    if (!jobnum >= 0)
+    if (!(jobnum >= 0))
     {
         cout << "[ERROR] Wrong jobnum: " << jobnums << endl;
         return false;
@@ -52,7 +52,7 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
     int thirdlast_ = filename.rfind("_", seclast_ - 1);
     std::string condorbatchs = filename.substr(seclast_ + 1, last_ - seclast_-1);
     condorbatch = std::stoi(condorbatchs);
-    if (!condorbatch >= 0)
+    if (!(condorbatch >= 0))
     {
         cout << "[ERROR] Wrong condorbatch: " << condorbatchs << endl;
         return false;

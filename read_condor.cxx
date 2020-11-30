@@ -95,7 +95,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
     int nentries = tree.GetEntries();
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) +"_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
     cout << outname << endl;
     return;
     if (debug)

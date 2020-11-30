@@ -1,16 +1,5 @@
 #!/bin/bash
-if [ "$4" == "true" ]; then
-	SUFFIX=_pnfs
-fi
-
-if [ "$6" == "true" ]; then
-	input="../GetStuff/$2$3_donesmall$SUFFIX.txt"
-else
-	input="../GetStuff/$2$SUFFIX.txt"
-fi
-#input="mc16_5TeV_short.txt"
-
-mkdir -p /usatlas/scratch/cher97/$2$3_smalls$SUFFIX
+input="/sphenix/user/xwang97/DPMJET/$1_$2.txt"
 
 #indexline=$1
 linenumber=0

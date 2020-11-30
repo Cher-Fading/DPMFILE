@@ -59,7 +59,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     myText(0.4, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
     myText(0.4, 0.5, kBlack, Form("Number of Events: %d", entries));
 
-    c0->SaveAs(Form("%s%s_%s_q2%s.pdf", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
+    c0->SaveAs(Form("%s%s_%s_q2%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
     a1 = (TH1F *)f1->Get("Multi");
     h0 = (TH1F *)p0->DrawFrame(0, 1, 30, 2e7);
@@ -98,5 +98,5 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
             ly1->Draw("SAME");
     }
 
-    c0->SaveAs(Form("%s%s_%s_multi%s.pdf", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
+    c0->SaveAs(Form("%s%s_%s_multi%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 }

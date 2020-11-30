@@ -22,11 +22,15 @@
 
 #ifdef __CLING__
 // these are not headers - do not treat them as such - needed for ROOT6
+#include "../atlasstyle-00-04-02/AtlasLabels.C"
+#include "../atlasstyle-00-04-02/AtlasUtils.C"
 #include "filenameparser.cpp"
 #endif
 
 #ifdef __CINT__
 gROOT->LoadMacro("filenameparser.cpp");
+gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
+gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
 const int Q2_max = 1e3;
 const float Q2_cut = 5.;

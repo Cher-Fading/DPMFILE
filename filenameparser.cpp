@@ -58,8 +58,8 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
         return false;
     }
 
-    int fourthlast_ = filename.rfind("_", thirdlast_-1);
-    jobname =filename.substr(fourthlast_+1,thirdlast_-fourthlast_-1);
+    int fort_ = filename.rfind("fort_", thirdlast_-1);
+    jobname =filename.substr(fort_+1,thirdlast_-fort_-1);
 
     
     return true;

@@ -1,10 +1,13 @@
 #!/bin/bash
 
-#$1 jobname $2 job batch $3 job number $4 batch mode (true) single job mode $5 event number
-for ((i=1;i<=40;i++)); do
+#$1 jobname $2 event number $3 batch mode $4 number of batches
+
 if [ $4 == "true" ]; then
-ls /sphenix/user/xwang97/DPMJET/$1_$2/fort*.root > "/sphenix/user/xwang97/DPMJET/$1_$2/$1_$2_files.txt"
+    for ((i = 1; i <= 40; i++)); do
+        ls /sphenix/user/xwang97/DPMJET/$1_$i/fort*$3.root >"/sphenix/user/xwang97/DPMJET/$1_$i/$1_$i_files.txt"
+        -l wc -l "/sphenix/user/xwang97/DPMJET/$1_$i/$1_$i_files.txt" >>/sphenix/user/xwang97/DPMJET/$1_$3batch_nof.txt
+    done
 else
-ls /sphenix/user/xwang97/DPMJET/$1/fort*.root > "/sphenix/user/xwang97/DPMJET/$1/$1_files.txt"
+    ls /sphenix/user/xwang97/DPMJET/$1/fort*$3.root >"/sphenix/user/xwang97/DPMJET/$1/$1_files.txt"
+    -l wc -l "/sphenix/user/xwang97/DPMJET/$1/$1_files.txt" >>/sphenix/user/xwang97/DPMJET/$1_$3nof.txt
 fi
-done

@@ -14,9 +14,8 @@ cp /sphenix/u/xwang97/DPMFILE/readCondor.condor /sphenix/u/xwang97/DPMFILE/readC
 sed -i "s@^Executable.*@Executable   = /sphenix/u/xwang97/DPMFILE/readcondor${1}_${i}\.\sh@" /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
 
 sed -i "s/^Queue.*/Queue ${num}/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1_$i.condor
-sed -i "s/^Arguments.*/Arguments       = ${1}_${i} \$(Process) ${3}/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1_$i.condor
+sed -i "s/^Arguments.*/Arguments       = ${1} ${i} \$(Process) true ${2}/" /sphenix/u/xwang97/DPMFILE/dpmCondor$1_$i.condor
 #cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
 
-cp /gpfs/mnt/gpfs02/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/$1.inp /gpfs/mnt/gpfs02/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/$1_$i.inp
-condor_submit /sphenix/u/xwang97/DPMFILE/dpmCondor$1_$i.condor
+condor_submit /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
 done

@@ -1,23 +1,24 @@
 #!/bin/bash
-input="/sphenix/user/xwang97/DPMJET/$1_$2.txt"
+
+#$1 jobname $2 job batch $3 job number $4 batch mode (true) single job mode $5 event number
+if [ $4 == "true" ]; then
+input="/sphenix/user/xwang97/DPMJET/$1_$2/$1_$2_files.txt"
+else
+input = "/sphenix/user/xwang97/DPMJET/$1/$1_files.txt"
 
 #indexline=$1
 linenumber=0
 while IFS= read -r line; do
-	if [ $1 -eq $linenumber ]; then
-		if [ "$6" == "true" ]; then
-			filename=/usatlas/scratch/cher97/$2$3_small/$line
+	if [ $3 -eq $linenumber ]; then
+		if [ "$4" == "true" ]; then
+			filename=/sphenix/user/xwang97/DPMJET/$1_$2/fort_$1_$2_$3_$5.root
 		else
-			mkdir -p '/usatlas/scratch/cher97/tempin'$linenumber
-			xrdcp 'root://dcgftp.usatlas.bnl.gov:1096/'$line '/usatlas/scratch/cher97/tempin'$linenumber
-			filename=/usatlas/scratch/cher97/tempin$linenumber/$(ls /usatlas/scratch/cher97/tempin$linenumber)
+
+			filename=/sphenix/user/xwang97/DPMJET/$1/fort_$1_$3_$5.root
 		fi
 echo $filename
-		root -b -q -l 'makeSTrees.C("'$5'","'$filename'","'/usatlas/scratch/cher97/$2$3_smalls$SUFFIX'")'
+		root -b -q -l 'read_condor.cxx("'$filename'")'
 		sleep 2
-		if [ "$6" == "true" ]; then
-			rm -rf '/usatlas/scratch/cher97/tempin'$linenumber
-		fi
 	fi
 	linenumber=$((linenumber + 1))
 done <"$input"

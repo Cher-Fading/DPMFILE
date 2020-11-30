@@ -50,7 +50,7 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
     }
 
     int thirdlast_ = filename.rfind("_", seclast_ - 1);
-    std::string condorbatchs = filename.substr(seclast_ + 1, last_ - seclast_-1);
+    std::string condorbatchs = filename.substr(thirdlast_ + 1, seclast_ - thirdlast_-1);
     condorbatch = std::stoi(condorbatchs);
     if (!(condorbatch >= 0))
     {

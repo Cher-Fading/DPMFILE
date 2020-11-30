@@ -98,7 +98,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) +"_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
     cout << outname << endl;
     std::ofstream statout(Form("%s_result.txt", outname.c_str()));
-    return;
+    //return;
     if (debug)
         outname += "_debug";
     cout << "Name: " << outname << endl;
@@ -115,7 +115,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     // EventPythia, EventPepsi, EventRapgap, EventDjangoh, EventMilou.
     // If you only need shared quantities like x, Q2 and the particle list
     // you can use EventBase and the macro will be general for any Monte Carlo.
-    erhic::EventPythia *event(NULL);        // = new EventPythia;
+    erhic::EventDpmjet *event(NULL);        // = new EventPythia;
                                             // EventBase* event(NULL)
     tree.SetBranchAddress("event", &event); // Note &event, not event.
     multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);

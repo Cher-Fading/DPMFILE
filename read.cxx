@@ -93,7 +93,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    TH1F *multP, *Q2P, *multa, *multb, *multc;
    TH2F *Q2E;
    THStack *s;
-   //TH1::AddDirectory(kFALSE);
+   TH1::AddDirectory(kFALSE);
    if (!replot)
    {
       tree.Add(inFileNames); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -106,7 +106,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       // EventPythia, EventPepsi, EventRapgap, EventDjangoh, EventMilou.
       // If you only need shared quantities like x, Q2 and the particle list
       // you can use EventBase and the macro will be general for any Monte Carlo.
-      erhic::EventPythia *event(NULL);        // = new EventPythia;
+      erhic::EventDpmjet *event(NULL);        // = new EventPythia;
                                               // EventBase* event(NULL)
       tree.SetBranchAddress("event", &event); // Note &event, not event.
       multP = hotTH1F("Multi", "dN/N vs Track Multiplicity of Final State Particles", 30, 0.5, 30.5, "", "", kRed, 0.3, 21, 1, false);
@@ -395,7 +395,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
       s = (THStack *)fout->Get("s");
 
-      s->SetDirectory(0);
+      //s->SetDirectory(0);
 
       fout->Close();
    }
@@ -442,7 +442,7 @@ void read(TString inFileNames, int nEvents = 0, bool debug = false, bool replot 
    if (replot)
    {
       fout = TFile::Open(Form("%s_result.root", outname.c_str()), "READ");
-      Q2E = (TH1F *)fout->Get("Q2E");
+      Q2E = (TH2F *)fout->Get("Q2E");
       Q2P->SetDirectory(0);
       fout->Close();
    }

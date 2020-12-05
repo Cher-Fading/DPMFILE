@@ -2,26 +2,26 @@
 #./readcondor_mult.sh ep_HERA4 1E4 40
 #$1 jobname $2 event number $3 number of batches
 cd /sphenix/u/xwang97/DPMFILE
-input="/sphenix/user/xwang97/DPMJET/$1_$2batch_nof.txt"
 #use a different condorjob for each batch of $400 simulations
-for ((i = 3; i <= $3; i++)); do
-    linenumber=1
-    while IFS= read -r line; do
-        if [ $i -eq $linenumber ]; then
-            num=$line
+for ((i = 1; i <= $3; i++)); do
+    if [ $3 ] >1; then
+        ls /sphenix/user/xwang97/DPMJET/${1}_${i}/fort*${2}.root >"/sphenix/user/xwang97/DPMJET/${1}_${i}/${1}_${i}_${2}_files.txt"
+        num=$(ls "/sphenix/user/xwang97/DPMJET/${1}_${i}/${1}_${i}_${2}_files.txt" | wc -l)
+        echo $num
+        if [ $i == 1 ]; then
+            echo $num >"/sphenix/user/xwang97/DPMJET/${1}_${2}batch_nof.txt"
+        else
+            echo $num >>"/sphenix/user/xwang97/DPMJET/${1}_${2}batch_nof.txt"
         fi
-        linenumber=$((linenumber + 1))
-    done <"$input"
-echo $num
-
-    #cp /sphenix/u/xwang97/DPMFILE/readcondor.sh /sphenix/u/xwang97/DPMFILE/readcondor$1_$i.sh
-    #cat /sphenix/u/xwang97/DPMFILE/dpmcondor$1$i.sh
-    #chmod +x /sphenix/u/xwang97/DPMFILE/readcondor$1_$i.sh
+    else
+        ls /sphenix/user/xwang97/DPMJET/${1}/fort*${2}.root >"/sphenix/user/xwang97/DPMJET/${1}/${1}_${2}_files.txt"
+        num=$(ls "/sphenix/user/xwang97/DPMJET/${1}/${1}_${2}_files.txt" | wc -l)
+        echo $num
+        echo $num >"/sphenix/user/xwang97/DPMJET/${1}_${2}batch_nof.txt"
+    fi
     cp /sphenix/u/xwang97/DPMFILE/readCondor.condor /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
-    #sed -i "s@^Executable.*@Executable   = /sphenix/u/xwang97/DPMFILE/readcondor${1}_${i}\.\sh@" /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
     sed -i "s/^Queue.*/Queue ${num}/" /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
     sed -i "s/^Arguments.*/Arguments       = ${1}_${i} \$(Process) ${2}/" /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
     cat /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
-
-    condor_submit /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
+    #condor_submit /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
 done

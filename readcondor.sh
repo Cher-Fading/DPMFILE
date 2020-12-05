@@ -7,9 +7,8 @@ input="/sphenix/user/xwang97/DPMJET/${1}/${1}_${3}_files.txt"
 linenumber=0
 while IFS= read -r line; do
     if [ $2 -eq $linenumber ]; then
-        filename=/sphenix/user/xwang97/DPMJET/${1}/fort_${1}_${2}_${3}.root
-        echo $filename
-        root -b -q -l 'read_condor.cxx("'$filename'")'
+        echo $line
+        root -b -q -l 'read_condor.cxx("'$line'")'
         sleep 2
     fi
     linenumber=$((linenumber + 1))

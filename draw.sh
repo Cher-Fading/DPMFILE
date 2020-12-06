@@ -5,7 +5,7 @@ cd /sphenix/user/xwang97/DPMJET/
 touch ${1}_${2}_nofevt.txt
 tot=0
 for ((i = 1; i <= $3; i++)); do
-    #hadd -f $1_${i}_$2_result$4.root $1_${i}/$1_${i}_*_result$4.root
+    hadd -f $1_${i}_$2_result$4.root $1_${i}/$1_${i}_*_result$4.root
     num=0
     for entry in $1_${i}/$1_${i}_*_result$4.root
 do
@@ -24,7 +24,7 @@ echo "${1} ${i} :$num" >> /sphenix/user/xwang97/DPMJET/${1}_${2}_nofevt.txt
     #cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
     #condor_submit /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
 done
-#hadd -f $1_batch_$3_$2_result$4.root $1_*_$2_result$4.root
+hadd -f $1_batch_$3_$2_result$4.root $1_*_$2_result$4.root
 echo "${1} :$tot"
 cd /sphenix/u/xwang97/DPMFILE/
-#root -b -q -l 'draw.cpp("'$1'", true, 40, "'$2'", "'$4'")'
+root -b -q -l 'draw.cpp("'$1'", true, 40, "'$2'", "'$4'")'

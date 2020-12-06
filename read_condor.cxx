@@ -89,19 +89,13 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     TH1F *multP, *Q2P, *multa, *multb, *multc;
     TH2F *Q2E;
     THStack *s;
-    
-    //TH1::AddDirectory(kFALSE);
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
     int nentries = tree.GetEntries();
     outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) +"_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
-    cout << outname << endl;
-    std::ofstream statout(Form("%s_result.txt", outname.c_str()));
-    //return;
-    if (debug)
-        outname += "_debug";
-    cout << "Name: " << outname << endl;
+    //TH1::AddDirectory(kFALSE);
+std::ofstream statout(Form("%s_result.txt", outname.c_str()));
     if (nentries == 0)
     {
         statout << "tot: " << 0 << endl;
@@ -333,6 +327,12 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         if (passedlim > 0 && nev >= passedlim)
             break;
     } // for
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) +"_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_"+std::to_string(nev)+ "_result" + name;
+    //cout << outname << endl;
+    //return;
+    if (debug)
+        outname += "_debug";
+    cout << "Name: " << outname << endl;
     fout = TFile::Open(Form("%s.root", outname.c_str()), "RECREATE");
     multP->SetMarkerSize(1);
     Q2P->Write();

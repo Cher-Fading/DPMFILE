@@ -1,10 +1,10 @@
 //name format /sphenix/user/xwang97/DPMJET/$A/fort_$A_$2_1E2.root
-bool filenameparser(std::string filename, int &jobnum, int &evtnb, std::string &jobname)
+bool filenameparser(std::string filename, int &jobnum, std::string &evtnb, std::string &jobname)
 {
     //initialize the values
     //condorbatch = -1;
     jobnum = -1;
-    evtnb = -1;
+    evtnb = "";
     jobname = "";
     //cout << filename << endl;
 
@@ -16,7 +16,7 @@ bool filenameparser(std::string filename, int &jobnum, int &evtnb, std::string &
         return false;
     }
 
-    int En = filename.rfind("E", ending - 1);
+    /*int En = filename.rfind("E", ending - 1);
     std::string Es = filename.substr(En + 1, ending - En - 1);
     int E = std::stoi(Es);
     if (!(E >= 0))
@@ -25,7 +25,7 @@ bool filenameparser(std::string filename, int &jobnum, int &evtnb, std::string &
         return false;
     }
 
-    int last_ = filename.rfind("_", ending - 1);
+    
     std::string Eds = filename.substr(last_ + 1, En - last_ - 1);
     int Ed = std::stoi(Eds);
     if (!(Ed >= 0))
@@ -38,7 +38,10 @@ bool filenameparser(std::string filename, int &jobnum, int &evtnb, std::string &
     {
         cout << "[ERROR] Wrong event number: " << Eds << "*" << Es << endl;
         return false;
-    }
+    }*/
+    int last_ = filename.rfind("_", ending - 1);
+    evtnb=filename.substr(last_+1,ending-last_-1);
+    
 
     int seclast_ = filename.rfind("_", last_ - 1);
     std::string jobnums = filename.substr(seclast_ + 1, last_ - seclast_ - 1);

@@ -75,10 +75,10 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     std::string inname = filename.Data();
     std::string outname;
     std::string jobname;
-    int condorbatch;
+    //int condorbatch;
     int jobnum;
-    int evtnb;
-    bool parser = filenameparser(inname, condorbatch, jobnum, evtnb, jobname);
+    std::string evtnb;
+    bool parser = filenameparser(inname, jobnum, evtnb, jobname);
     if (!parser)
     {
         cout << "parising failed" << endl;
@@ -93,9 +93,9 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
     int nentries = tree.GetEntries();
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb + "_" + std::to_string "_result" + name;
     //TH1::AddDirectory(kFALSE);
-std::ofstream statout(Form("%s_result.txt", outname.c_str()));
+    std::ofstream statout(Form("%s_result.txt", outname.c_str()));
     if (nentries == 0)
     {
         statout << "tot: " << 0 << endl;
@@ -327,7 +327,7 @@ std::ofstream statout(Form("%s_result.txt", outname.c_str()));
         if (passedlim > 0 && nev >= passedlim)
             break;
     } // for
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) +"_"+ std::to_string(jobnum) + "_" + std::to_string(nentries) + "_"+std::to_string(nev)+ "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + std::to_string(nev) + "_result" + name;
     //cout << outname << endl;
     //return;
     if (debug)

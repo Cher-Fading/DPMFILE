@@ -1,8 +1,8 @@
-//name format /sphenix/user/xwang97/DPMJET/$A_$i/fort_$A_$i_$2_1E2.root
-bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &evtnb, std::string &jobname)
+//name format /sphenix/user/xwang97/DPMJET/$A/fort_$A_$2_1E2.root
+bool filenameparser(std::string filename, int &jobnum, int &evtnb, std::string &jobname)
 {
     //initialize the values
-    condorbatch = -1;
+    //condorbatch = -1;
     jobnum = -1;
     evtnb = -1;
     jobname = "";
@@ -49,17 +49,17 @@ bool filenameparser(std::string filename, int &condorbatch, int &jobnum, int &ev
         return false;
     }
 
-    int thirdlast_ = filename.rfind("_", seclast_ - 1);
+    /*int thirdlast_ = filename.rfind("_", seclast_ - 1);
     std::string condorbatchs = filename.substr(thirdlast_ + 1, seclast_ - thirdlast_-1);
     condorbatch = std::stoi(condorbatchs);
     if (!(condorbatch >= 0))
     {
         cout << "[ERROR] Wrong condorbatch: " << condorbatchs << endl;
         return false;
-    }
+    }*/
 
-    int fort_ = filename.rfind("fort_", thirdlast_-1);
-    jobname =filename.substr(fort_+5,thirdlast_-fort_-5);
+    int fort_ = filename.rfind("fort_", seclast_-1);
+    jobname =filename.substr(fort_+5,seclast_-fort_-5);
 
     
     return true;

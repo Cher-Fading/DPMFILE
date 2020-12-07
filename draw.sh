@@ -41,4 +41,4 @@ echo "${1} passed:$passed"
 echo "${1} total:$tot">>${1}_${2}_nofevt.txt
 echo "${1} passed:$passed">>${1}_${2}_nofevt.txt
 cd /sphenix/u/xwang97/DPMFILE/
-root -b -q -l 'draw.cpp("'$1'", true, '$3', "'$2'", "'$4'")'
+root -b -q -l 'draw.cpp("'$1'", true, '$3', "'$2'", "'$4'",10.,100.,5.,1000.)'

@@ -50,7 +50,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
  			  0, 2,1,1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come=27.5)
+void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come=27.5, float max_q2=10000.)
 {
 
     int q2_min = 1;
@@ -159,7 +159,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         if (debug)
             cout << "Q2: " << q2 << endl;
 
-        if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > 1e4))
+        if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > max_q2))
         {
             ievnn++;
             if (debug && passedlim == 0)
@@ -310,7 +310,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
             }
         }
         const Particle *part_sc = event->GetTrack(scattered_ind);
-        if (part_sc->GetE() < 10)
+        if (part_sc->GetE() < (10./27.5*come))
             {ievnn++;
 continue;}
         if ((part_sc->GetE() - part_sc->GetPz()) < round((47./55.)*(come*2.)) || (part_sc->GetE() - part_sc->GetPz()) > round((69./55.)*(come*2.)))

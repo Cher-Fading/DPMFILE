@@ -14,7 +14,7 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
 
-void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut")
+void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut",float come = 27.5,float s=100.,float q2_min=5.,float q2_max=1000.)
 {
     std::string batch = batchmode ? Form("_batch_%d", batches) : "";
     TFile *f1 = TFile::Open(Form("/sphenix/user/xwang97/DPMJET/%s_%s%s_result%s.root", jobname.c_str(), evtnb.c_str(), batch.c_str(), label.c_str()), "READ");
@@ -51,13 +51,13 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
         if (x1 > 5 && x1 < 1000 && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
             ly1->Draw("SAME");
     }
-    myMarkerText(0.6, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);
-    myText(0.6, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
-    myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
-    myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
-    myText(0.6, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
-    myText(0.6, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
-    myText(0.6, 0.5, kBlack, Form("Number of Events: %d", entries));
+    myMarkerText(0.5, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);
+    myText(0.5, 0.6, kBlack, Form("#sqrt{s} = %d GeV",(int)round(s)), 0.04);
+    myText(0.5, 0.75, kBlack, Form("%.1f GeV < Q^{2} < %.1f GeV", q2_min,q2_max), 0.04);
+    myText(0.5, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.5, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myText(0.5, 0.55, kBlack, Form("%d GeV < E_{scattered}-p_{z,scattered} < %d GeV",(int)round(47./55.*2.*come),(int)round(69./55.*2.*come)));
+    myText(0.5, 0.5, kBlack, Form("Number of Events: %d", entries));
 
     c0->SaveAs(Form("%s%s_%s_q2%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
@@ -77,12 +77,12 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     //gStyle->SetErrorX(0);
     a1->Draw("SAME HIST P");
 
-    myText(0.6, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
-    myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
-    myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
-    myText(0.6, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
-    myText(0.6, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
-    myText(0.6, 0.5, kBlack, Form("Number of Events: %d", entries));
+    myText(0.5, 0.6, kBlack, Form("#sqrt{s} = %d GeV",(int)round(s)), 0.04);
+    myText(0.5, 0.75, kBlack, Form("%.1f GeV < Q^{2} < %.1f GeV", q2_min,q2_max), 0.04);
+    myText(0.5, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.5, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myText(0.5, 0.55, kBlack, Form("%d GeV < E_{scattered}-p_{z,scattered} < %d GeV",(int)round(47./55.*2.*come),(int)round(69./55.*2.*come)));
+    myText(0.5, 0.5, kBlack, Form("Number of Events: %d", entries));
 
     for (int i = 1; i < 31; i++)
     {

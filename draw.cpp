@@ -17,7 +17,7 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut")
 {
     std::string batch = batchmode ? Form("_batch_%d", batches) : "";
-    TFile *f1 = TFile::Open(Form("/sphenix/user/xwang97/DPMJET/%s%s_%s_result%s.root", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()), "READ");
+    TFile *f1 = TFile::Open(Form("/sphenix/user/xwang97/DPMJET/%s_%s%s_result%s.root", jobname.c_str(), evtnb.c_str(), batch.c_str(), label.c_str()), "READ");
     TH1::AddDirectory(kFALSE);
     TH1F *a1 = (TH1F *)f1->Get("Q2");
     TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);

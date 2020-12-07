@@ -33,24 +33,24 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
 const int Q2_max = 1e3;
-const float Q2_cut = 5.;
+//const float Q2_cut = 5.;
 
-const int listn = 26;
+const int listn = 34;
 const int partl[listn] = {11, 13, 22, 81, 111,
                           130, 211, 310, 313, 321,
                           323, 411, 421, 431, 2112,
                           2212, 3122, 3222, 3112, 3212,
-                          3322, 3312, 4122, 4132, 4232,
-                          4212};
+                          3322, 3312, 3334,4112,4122,
+ 			  4132, 4222,4232,4212};
 const int charl[listn] = {-1, -1, 0, 0, 0,
-                          0, -1, 0, 0, 1,
+                          0, 1, 0, 0, 1,
                           1, 1, 0, 1, 0,
                           1, 0, 1, -1, 0,
-                          0, -1, 1, 0, 1,
-                          1};
+                          0, -1, -1,0,1,
+ 			  0, 2,1,1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut")
+void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come=27.5)
 {
 
     int q2_min = 1;
@@ -64,6 +64,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         if (debug)
             cout << q2_bins[i] << "; ";
         initial = initial + incre;
+//cout << q2_bins[i];
     }
     if (debug)
         cout << endl;
@@ -93,7 +94,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
     int nentries = tree.GetEntries();
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb + "_" + std::to_string "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb + "_result" + name;
     //TH1::AddDirectory(kFALSE);
     std::ofstream statout(Form("%s_result.txt", outname.c_str()));
     if (nentries == 0)
@@ -280,7 +281,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
                     cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                     cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                 }
-                if (round(q2) == round(q2val))
+                if (abs(q2-q2val)<=0.5)
                 {
                     Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
                     scattered = true;
@@ -310,9 +311,11 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         }
         const Particle *part_sc = event->GetTrack(scattered_ind);
         if (part_sc->GetE() < 10)
-            continue;
-        if ((part_sc->GetE() - part_sc->GetPz()) < 47 || (part_sc->GetE() - part_sc->GetPz()) > 69)
-            continue;
+            {ievnn++;
+continue;}
+        if ((part_sc->GetE() - part_sc->GetPz()) < round((47./55.)*(come*2.)) || (part_sc->GetE() - part_sc->GetPz()) > round((69./55.)*(come*2.)))
+            {ievnn++;
+continue;}
         nev++;
         multP->Fill(counter);
         multa->Fill(countera);
@@ -327,7 +330,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         if (passedlim > 0 && nev >= passedlim)
             break;
     } // for
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "_" + std::to_string(condorbatch) + "/" + jobname + "_" + std::to_string(condorbatch) + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + std::to_string(nev) + "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb +"_"+ std::to_string(nev) + "_result" + name;
     //cout << outname << endl;
     //return;
     if (debug)
@@ -349,13 +352,13 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     s->Add(multc);
 
     s->Write();
-    statout << "passed Q2>5: " << nev << endl;
+    statout << "passed "+name+": " << nev << endl;
 
     fout->Close();
 
     cout << "---------------------------------------------------------------------------------" << endl;
-    cout << "passed Q2: " << nev << endl;
-    cout << "not passed Q2 " << ievnn << endl;
+    cout << "passed "+name+": " << nev << endl;
+    cout << "not passed "+name+": " << ievnn << endl;
 
     cout << "--------------------------------------------------------------------------------------" << endl;
     cout << "not listed pdg: " << endl;

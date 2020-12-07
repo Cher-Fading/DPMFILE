@@ -35,7 +35,6 @@ echo "now remove old output"
 rm -rf /sphenix/user/xwang97/DPMJET/$1/$A/$B
 rm /sphenix/user/xwang97/DPMJET/$1/$A/fort.${output}
 echo "now read it"
-root -b -q -l '/sphenix/u/xwang97/DPMFILE/read_condor.cxx("'/sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root'")'
-echo "now remove data file"
-#rm /sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root
+cd /sphenix/u/xwang97/DPMFILE
+root -b -q -l 'read_condor.cxx("'/sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root'", 0, false, 0, "fullcut", 5., 27.5)'
 echo "finished"

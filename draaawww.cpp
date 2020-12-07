@@ -16,13 +16,13 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 
 void draaawww()
 {
-    TFile *f1 = TFile::Open("ep_HERA2_nocut_result.root", "REAd");
-    TFile *f2 = TFile::Open("ep_HERA2_cut_result.root", "REAd");
+    TFile *f1 = TFile::Open("ep_HERA5_1E4_batch_20_resultfullcut.root", "REAd");
+    TFile *f2 = TFile::Open("ep_HERA6_1E4_batch_20_resultfullcut.root", "REAd");
     TH1F *a1 = (TH1F *)f1->Get("Q2");
     TH1F *a2 = (TH1F *)f2->Get("Q2");
     TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
     TPad *p0 = (TPad *)c0->cd();
-    TH1F *h0 = (TH1F *)p0->DrawFrame(5, 1, 1000, 2e7);
+    TH1F *h0 = (TH1F *)p0->DrawFrame(5, 1e2, 1000, 2e7);
     h0->Draw();
     c0->cd();
     h0->GetXaxis()->SetTitle("Q^{2}");
@@ -37,7 +37,7 @@ void draaawww()
     //gStyle->SetErrorX(0);
     a1->Scale(1,"width");
     a1->Draw("SAME HIST P");
-    a2->SetMarkerSize(0.8);
+    a2->SetMarkerSize(1);
     a2->SetMarkerStyle(20);
     a2->SetLineColor(kBlue);
     a2->SetMarkerColor(kBlue);
@@ -63,14 +63,14 @@ void draaawww()
         if (a2->GetXaxis()->GetBinLowEdge(i) > 5 && a2->GetXaxis()->GetBinLowEdge(i + 1) < 1000 && y2 > 1e2) lx2->Draw("SAME");
         if (x2>5 && x2 <1000 && y2 - a2->GetBinErrorLow(i) > 1e2 && y2 + a2->GetBinErrorUp(i) < 1e7) ly2->Draw("SAME");
     }
-    myMarkerText(0.4, 0.85, kRed, 21, "Before Event Selection", 1.2, 0.04);
-    myMarkerText(0.4, 0.8, kBlue, 20, "After Event Selection", 1.2, 0.04);
+    myMarkerText(0.6, 0.85, kRed, 21, "0.03 < y < 0.95", 1.2, 0.04);
+    myMarkerText(0.6, 0.8, kBlue, 20, "0.03 < y < 0.65", 1.2, 0.04);
 
-    c0->SaveAs("compare_q2.pdf");
+    c0->SaveAs("compare_q2_ep_HERA5_ep_HERA6.png");
 
     a1 = (TH1F *)f1->Get("Multi");
     a2 = (TH1F *)f2->Get("Multi");
-    h0 = (TH1F *)p0->DrawFrame(0, 1, 30, 2e7);
+    h0 = (TH1F *)p0->DrawFrame(0, 1e2, 30, 2e7);
     h0->Draw();
     c0->cd();
     h0->GetXaxis()->SetTitle("Number of Tracks");
@@ -85,19 +85,19 @@ void draaawww()
     //gStyle->SetErrorX(0);
     
     a1->Draw("SAME HIST P");
-    a2->SetMarkerSize(0.8);
+    a2->SetMarkerSize(1);
     a2->SetMarkerStyle(20);
     a2->SetLineColor(kBlue);
     a2->SetMarkerColor(kBlue);
     a2->SetLineStyle(2);
     
     a2->Draw("SAME HIST P");
-    myMarkerText(0.4, 0.85, kRed, 21, "Before Event Selection", 1.2, 0.04);
-    myMarkerText(0.4, 0.8, kBlue, 20, "After Event Selection", 1.2, 0.04);
-    myText(0.4, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
-    myText(0.4, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
-    myText(0.4, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
-    myText(0.4, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myMarkerText(0.6, 0.85, kRed, 21, "0.03 < y < 0.95", 1.2, 0.04);
+    myMarkerText(0.6, 0.8, kBlue, 20, "0.03 < y < 0.65", 1.2, 0.04);
+    myText(0.6, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
+    myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
+    myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.6, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
     for (int i = 1; i < 31; i++)
     {
         double y1 = a1->GetBinContent(i);
@@ -118,5 +118,5 @@ void draaawww()
         if (x2>5 && x2 <30 && y2 - a2->GetBinErrorLow(i) > 1e2 && y2 + a2->GetBinErrorUp(i) < 1e7) ly2->Draw("SAME");
     }
 
-    c0->SaveAs("compare_multi.pdf");
+    c0->SaveAs("compare_multi_ep_HERA5_ep_HERA6.png");
 }

@@ -51,13 +51,13 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
         if (x1 > 5 && x1 < 1000 && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
             ly1->Draw("SAME");
     }
-    myMarkerText(0.4, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);
-    myText(0.4, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
-    myText(0.4, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
-    myText(0.4, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
-    myText(0.4, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
-    myText(0.4, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
-    myText(0.4, 0.5, kBlack, Form("Number of Events: %d", entries));
+    myMarkerText(0.6, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);
+    myText(0.6, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
+    myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
+    myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.6, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myText(0.6, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
+    myText(0.6, 0.5, kBlack, Form("Number of Events: %d", entries));
 
     c0->SaveAs(Form("%s%s_%s_q2%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
@@ -77,12 +77,12 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     //gStyle->SetErrorX(0);
     a1->Draw("SAME HIST P");
 
-    myText(0.4, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
-    myText(0.4, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
-    myText(0.4, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
-    myText(0.4, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
-    myText(0.4, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
-    myText(0.4, 0.5, kBlack, Form("Number of Events: %d", entries));
+    myText(0.6, 0.6, kBlack, "#sqrt{s} = 318 GeV", 0.04);
+    myText(0.6, 0.75, kBlack, Form("Q^{2} > %.1f GeV", 5.), 0.04);
+    myText(0.6, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.6, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myText(0.6, 0.55, kBlack, "47 GeV < E_{scattered}-p_{z,scattered} < 69 GeV");
+    myText(0.6, 0.5, kBlack, Form("Number of Events: %d", entries));
 
     for (int i = 1; i < 31; i++)
     {

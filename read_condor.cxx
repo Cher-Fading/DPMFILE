@@ -54,6 +54,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
 {
 
     int q2_min = 1;
+    Float_t mult_bins[31];
     Float_t q2_bins[31];
     float initial = log(q2_min);
     float incre = log(Q2_max / q2_min) / 30.;
@@ -61,6 +62,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     for (int i = 0; i < 31; i++)
     {
         q2_bins[i] = TMath::Power(TMath::E(), initial);
+        mult_bins[i] = i+0.5;
         if (debug)
             cout << q2_bins[i] << "; ";
         initial = initial + incre;
@@ -90,6 +92,8 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     TH1F *multP, *Q2P, *multa, *multb, *multc;
     TH2F *Q2E;
     THStack *s;
+    TGraphErrors* Q2M_ave;
+    TH2F* Q2M,Q2M_norm;
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
@@ -121,10 +125,18 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     multc = hotTH1F("Q2_1001", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
 
     Q2E = new TH2F("Q2E", "Heatmap of Electron momentum vs Q2", 30, q2_bins, 30, q2_bins);
-    Q2E->GetXaxis()->SetTitle("Q^{2}");
+    /*Q2E->GetXaxis()->SetTitle("Q^{2}");
     Q2E->GetYaxis()->SetTitle("-(k-k')^{2}");
-    Q2E->GetZaxis()->SetTitle("Normalized (per event) Fraction");
+    Q2E->GetZaxis()->SetTitle("Normalized (per event) Fraction");*/
     Q2E->SetMarkerStyle(21);
+
+    Q2M = new TH2F("Q2M", "Heatmap of track multiplicity vs Q2", 30, q2_bins, 30, mult_bins);
+    /*Q2M->GetXaxis()->SetTitle("Q^{2}");
+    Q2M->GetYaxis()->SetTitle("N_{ch}");
+    Q2M->GetZaxis()->SetTitle("Normalized (per Q2 bin) Fraction");*/
+    Q2M->SetMarkerStyle(20);
+    Q2M_norm = new TH2F("Q2M_norm", "Heatmap of track multiplicity vs Q2", 30, q2_bins, 30, mult_bins);
+    Q2M_ave = hotTGraphErrors("multiplicity averaged vs Q2","trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
 
     // Loop over events:
     if (nEvents == 0)
@@ -322,6 +334,10 @@ continue;}
         multb->Fill(counterb);
         multc->Fill(counterc);
         Q2P->Fill(q2);
+        Q2M->Fill(q2,counter);
+        for (int i = 1; i < 31; i++){
+            Q2M_norm->(q2,i);
+        }
         if (debug)
             cout << "Event " << i << " finished processing"
                  << "; This is the " << nev << "-th event passing Q2 processed" << endl

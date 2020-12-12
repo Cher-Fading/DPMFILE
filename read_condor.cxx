@@ -32,7 +32,7 @@ gROOT->LoadMacro("filenameparser.cpp");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
-const int Q2_max = 1e3;
+const float Q2_max = 1e3;
 //const float Q2_cut = 5.;
 
 const int listn = 34;
@@ -40,34 +40,38 @@ const int partl[listn] = {11, 13, 22, 81, 111,
                           130, 211, 310, 313, 321,
                           323, 411, 421, 431, 2112,
                           2212, 3122, 3222, 3112, 3212,
-                          3322, 3312, 3334,4112,4122,
- 			  4132, 4222,4232,4212};
+                          3322, 3312, 3334, 4112, 4122,
+                          4132, 4222, 4232, 4212};
 const int charl[listn] = {-1, -1, 0, 0, 0,
                           0, 1, 0, 0, 1,
                           1, 1, 0, 1, 0,
                           1, 0, 1, -1, 0,
-                          0, -1, -1,0,1,
- 			  0, 2,1,1};
+                          0, -1, -1, 0, 1,
+                          0, 2, 1, 1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come=27.5, float max_q2=10000.)
+void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come = 27.5, float max_q2 = 10000.)
 {
 
-    int q2_min = 1;
+    float q2_min = 1;
     Float_t mult_bins[31];
     Float_t q2_bins[31];
+
     float initial = log(q2_min);
     float incre = log(Q2_max / q2_min) / 30.;
-
+    TH1F *q2_ave[30];
     for (int i = 0; i < 31; i++)
     {
         q2_bins[i] = TMath::Power(TMath::E(), initial);
-        mult_bins[i] = i+0.5;
+        mult_bins[i] = i + 0.5;
         if (debug)
             cout << q2_bins[i] << "; ";
         initial = initial + incre;
-//cout << q2_bins[i];
+        if (i == 30)
+            continue;
+        q2_ave[i] = new TH1F(Form("%d", i), "q2_ave", 30, 0.5, 30.5);
     }
+    //cout << q2_bins[i];}
     if (debug)
         cout << endl;
 
@@ -84,16 +88,17 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     bool parser = filenameparser(inname, jobnum, evtnb, jobname);
     if (!parser)
     {
-        cout << "parising failed" << endl;
+        cout << "parsing failed" << endl;
         return;
     }
 
     TFile *fout;
     TH1F *multP, *Q2P, *multa, *multb, *multc;
+
     TH2F *Q2E;
     THStack *s;
-    TGraphErrors* Q2M_ave;
-    TH2F* Q2M,Q2M_norm;
+    TGraphErrors *Q2M_ave;
+    TH2F *Q2M, Q2M_norm;
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
@@ -136,7 +141,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     Q2M->GetZaxis()->SetTitle("Normalized (per Q2 bin) Fraction");*/
     Q2M->SetMarkerStyle(20);
     Q2M_norm = new TH2F("Q2M_norm", "Heatmap of track multiplicity vs Q2", 30, q2_bins, 30, mult_bins);
-    Q2M_ave = hotTGraphErrors("multiplicity averaged vs Q2","trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
+    Q2M_ave = hotTGraphErrors("multiplicity averaged vs Q2", "trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
 
     // Loop over events:
     if (nEvents == 0)
@@ -293,7 +298,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
                     cout << "event: " << i << "; in: " << k << "; out:" << l << endl;
                     cout << "Q2: " << q2 << "; q2 eval: " << q2val << endl;
                 }
-                if (abs(q2-q2val)<=0.5)
+                if (abs(q2 - q2val) <= 0.5)
                 {
                     Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
                     scattered = true;
@@ -322,21 +327,27 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
             }
         }
         const Particle *part_sc = event->GetTrack(scattered_ind);
-        if (part_sc->GetE() < (10./27.5*come))
-            {ievnn++;
-continue;}
-        if ((part_sc->GetE() - part_sc->GetPz()) < round((47./55.)*(come*2.)) || (part_sc->GetE() - part_sc->GetPz()) > round((69./55.)*(come*2.)))
-            {ievnn++;
-continue;}
+        if (part_sc->GetE() < (10. / 27.5 * come))
+        {
+            ievnn++;
+            continue;
+        }
+        if ((part_sc->GetE() - part_sc->GetPz()) < round((47. / 55.) * (come * 2.)) || (part_sc->GetE() - part_sc->GetPz()) > round((69. / 55.) * (come * 2.)))
+        {
+            ievnn++;
+            continue;
+        }
         nev++;
         multP->Fill(counter);
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
         Q2P->Fill(q2);
-        Q2M->Fill(q2,counter);
-        for (int i = 1; i < 31; i++){
-            Q2M_norm->(q2,i);
+        Q2M->Fill(q2, counter);
+        q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
+        for (int i = 1; i < 31; i++)
+        {
+            Q2M_norm->(q2, i);
         }
         if (debug)
             cout << "Event " << i << " finished processing"
@@ -346,7 +357,7 @@ continue;}
         if (passedlim > 0 && nev >= passedlim)
             break;
     } // for
-    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb +"_"+ std::to_string(nev) + "_result" + name;
+    outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb + "_" + std::to_string(nev) + "_result" + name;
     //cout << outname << endl;
     //return;
     if (debug)
@@ -368,13 +379,20 @@ continue;}
     s->Add(multc);
 
     s->Write();
-    statout << "passed "+name+": " << nev << endl;
-
+    statout << "passed " + name + ": " << nev << endl;
+    Q2M->Divide(Q2M_norm);
+    Q2M->Write();
+    for (int i = 0; i < 30; i++)
+    {
+        Q2M_ave->SetPoint(i + 1, (q2_bins[i] + q2_bins[i + 1]) / 2., q2_ave[i]->GetMean());
+        Q2M_ave->SetPointError(i + 1, (q2_bins[i] - q2_bins[i + 1]) / 2., q2_ave[i]->GetStdDev());
+    }
+    Q2M_ave->Write();
     fout->Close();
 
     cout << "---------------------------------------------------------------------------------" << endl;
-    cout << "passed "+name+": " << nev << endl;
-    cout << "not passed "+name+": " << ievnn << endl;
+    cout << "passed " + name + ": " << nev << endl;
+    cout << "not passed " + name + ": " << ievnn << endl;
 
     cout << "--------------------------------------------------------------------------------------" << endl;
     cout << "not listed pdg: " << endl;

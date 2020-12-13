@@ -69,7 +69,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         initial = initial + incre;
         if (i == 30)
             continue;
-        q2_ave[i] = new TH1F(Form("%d", i), "q2_ave", 30, 0.5, 30.5);
+        q2_ave[i] = new TH1F(Form("q2_ave_%d", i), "q2_ave", 30, 0.5, 30.5);
     }
     //cout << q2_bins[i];}
     if (debug)
@@ -97,7 +97,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
 
     TH2F *Q2E;
     THStack *s;
-    TGraphErrors *Q2M_ave;
+    //TGraphErrors *Q2M_ave;
     TH2F *Q2M, *Q2M_norm;
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
@@ -141,7 +141,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     Q2M->GetZaxis()->SetTitle("Normalized (per Q2 bin) Fraction");*/
     Q2M->SetMarkerStyle(20);
     Q2M_norm = new TH2F("Q2M_norm", "Heatmap of track multiplicity vs Q2", 30, q2_bins, 30, mult_bins);
-    Q2M_ave = hotTGraphErrors("multiplicity averaged vs Q2", "trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
+    //Q2M_ave = hotTGraphErrors("multiplicity averaged vs Q2", "trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
 
     // Loop over events:
     if (nEvents == 0)
@@ -389,10 +389,11 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     Q2M->Write();
     for (int i = 0; i < 30; i++)
     {
-        Q2M_ave->SetPoint(i + 1, (q2_bins[i] + q2_bins[i + 1]) / 2., q2_ave[i]->GetMean());
-        Q2M_ave->SetPointError(i + 1, (q2_bins[i] - q2_bins[i + 1]) / 2., q2_ave[i]->GetStdDev());
+        q2_ave[i]->Write();
+        //Q2M_ave->SetPoint(i + 1, (q2_bins[i] + q2_bins[i + 1]) / 2., q2_ave[i]->GetMean());
+        //Q2M_ave->SetPointError(i + 1, (q2_bins[i] - q2_bins[i + 1]) / 2., q2_ave[i]->GetStdDev());
     }
-    Q2M_ave->Write();
+    //Q2M_ave->Write();
     fout->Close();
 
     cout << "---------------------------------------------------------------------------------" << endl;

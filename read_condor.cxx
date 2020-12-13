@@ -342,12 +342,16 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
-        Q2P->Fill(q2);
-        Q2M->Fill(q2, counter);
-        q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
-        for (int i = 1; i < 31; i++)
+
+        if (q2 <= 1e3)
         {
-            Q2M_norm->Fill(q2, i);
+            Q2P->Fill(q2);
+            Q2M->Fill(q2, counter);
+            q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
+            for (int i = 1; i < 31; i++)
+            {
+                Q2M_norm->Fill(q2, i);
+            }
         }
         if (debug)
             cout << "Event " << i << " finished processing"

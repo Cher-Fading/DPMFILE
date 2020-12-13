@@ -98,7 +98,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     TH2F *Q2E;
     THStack *s;
     //TGraphErrors *Q2M_ave;
-    TH2F *Q2M, *Q2M_norm;
+    TH2F *Q2M, *Q2M_norm, *Q2M_normed;
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
@@ -385,8 +385,10 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
 
     s->Write();
     statout << "passed " + name + ": " << nev << endl;
-    Q2M->Divide(Q2M_norm);
+    Q2M_normed=(TH2F*)Q2M->Clone();
+    Q2M_normed->Divide(Q2M_norm);
     Q2M->Write();
+    Q2M_normed->Write();
     for (int i = 0; i < 30; i++)
     {
         q2_ave[i]->Write();

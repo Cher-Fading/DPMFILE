@@ -98,7 +98,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
     TH2F *Q2E;
     THStack *s;
     TGraphErrors *Q2M_ave;
-    TH2F *Q2M, Q2M_norm;
+    TH2F *Q2M, *Q2M_norm;
 
     tree.Add(filename); // Wild cards are allowed e.g. tree.Add("*.root" );
     // tree.Add(/path/to/otherFileNames ); // etc...
@@ -347,7 +347,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
         for (int i = 1; i < 31; i++)
         {
-            Q2M_norm->(q2, i);
+            Q2M_norm->Fill(q2, i);
         }
         if (debug)
             cout << "Event " << i << " finished processing"

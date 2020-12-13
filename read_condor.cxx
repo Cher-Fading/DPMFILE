@@ -35,14 +35,14 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 const float Q2_max = 1e3;
 //const float Q2_cut = 5.;
 
-const int listn = 34;
-const int partl[listn] = {11, 13, 22, 81, 111,
+const int listn = 35;
+const int partl[listn] = {11, 13, 16, 22, 81, 111,
                           130, 211, 310, 313, 321,
                           323, 411, 421, 431, 2112,
                           2212, 3122, 3222, 3112, 3212,
                           3322, 3312, 3334, 4112, 4122,
                           4132, 4222, 4232, 4212};
-const int charl[listn] = {-1, -1, 0, 0, 0,
+const int charl[listn] = {-1, -1, 0, 0, 0, 0,
                           0, 1, 0, 0, 1,
                           1, 1, 0, 1, 0,
                           1, 0, 1, -1, 0,
@@ -53,7 +53,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0,
 void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come = 27.5, float max_q2 = 10000.)
 {
 
-    float q2_min = 1;
+    float q2_min = Q2_cut;
     Float_t mult_bins[31];
     Float_t q2_bins[31];
 
@@ -347,7 +347,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         {
             Q2P->Fill(q2);
             Q2M->Fill(q2, counter);
-            cout << q2 << " " << (int)(TMath::Log(q2 / q2_min) / incre)<< endl;
+            //cout << q2 << " " << (int)(TMath::Log(q2 / q2_min) / incre)<< endl;
             q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
             for (int i = 1; i < 31; i++)
             {

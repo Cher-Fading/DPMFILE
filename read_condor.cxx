@@ -347,6 +347,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         {
             Q2P->Fill(q2);
             Q2M->Fill(q2, counter);
+            cout << q2 << " " << (int)(TMath::Log(q2 / q2_min) / incre)<< endl;
             q2_ave[(int)(TMath::Log(q2 / q2_min) / incre)]->Fill(counter);
             for (int i = 1; i < 31; i++)
             {

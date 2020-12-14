@@ -125,7 +125,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     a3_ave->Draw("APE");
 
     myText(0.5, 0.6, kBlack, Form("#sqrt{s} = %d GeV", (int)round(s)), 0.04);
-    myText(0.5, 0.75, kBlack, Form("0.03 < y < 0.95", 0.04);
+    myText(0.5, 0.75, kBlack, "0.03 < y < 0.95", 0.04);
     myText(0.5, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
     myText(0.5, 0.65, kBlack, "-1.5 < #eta_{trk} < 2.0", 0.04);
     myText(0.5, 0.55, kBlack, Form("%d GeV < E_{scattered}-p_{z,scattered} < %d GeV", (int)round(47. / 55. * 2. * come), (int)round(69. / 55. * 2. * come)));
@@ -144,7 +144,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     q2m->GetXaxis()->SetRangeUser(q2_min,q2_max_edge);
     c0->SetLogx(1);
     c0->SetLogy(0);
-    c0->SaveAs(Form("%s%s_%s_q2m%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str());
+    c0->SaveAs(Form("%s%s_%s_q2m%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
     TH2F* q2m_norm = (TH2F*)q2m->Clone();
     for (int i = 0; i < 30; i++){//each q2 bin
         float norm = 0;
@@ -158,7 +158,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
         }
     }
     TH2F* q2m_normed = (TH2F*)q2m->Clone();
-    q2m_normed->Divide(q2_norm);
+    q2m_normed->Divide(q2m_norm);
     c0->cd();
     q2m_normed->Draw("colz");
     q2m_normed->GetXaxis()->SetTitle("Q^{2}");

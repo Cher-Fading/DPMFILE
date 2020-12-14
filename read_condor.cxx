@@ -389,6 +389,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
     Q2M_normed=(TH2F*)Q2M->Clone();
     Q2M_normed->Divide(Q2M_norm);
     Q2M->Write();
+    Q2M->Write();
     Q2M_normed->Write();
     for (int i = 0; i < 30; i++)
     {

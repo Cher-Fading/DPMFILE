@@ -363,10 +363,6 @@ if (debug)
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
-<<<<<<< HEAD
-
-=======
->>>>>>> 434580ec32b175d191fac2f3bd8f8f1906a73ad3
 
         if (q2 <= 1e3)
         {

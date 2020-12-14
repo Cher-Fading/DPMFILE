@@ -167,5 +167,5 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     q2m_normed->GetXaxis()->SetRangeUser(q2_min,q2_max_edge);
     c0->SetLogx(1);
     c0->SetLogy(0);
-    c0->SaveAs(Form("%s%s_%s_q2m_normed_%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str());
+    c0->SaveAs(Form("%s%s_%s_q2m_normed_%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 }

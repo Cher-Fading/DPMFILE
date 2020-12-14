@@ -71,6 +71,17 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
             continue;
         q2_ave[i] = new TH1F(Form("q2_ave_%d", i), "q2_ave", 30, 0.5, 30.5);
     }
+
+    float initialx = log(1e-5);
+    float increx = log(1./1e-5)/25.;
+    Float_t x_bins[26];
+    for (int i = 0;i < 26;i++){
+        x_bins[i] = TMath::Power(TMath::E(),initialx);
+        initialx=initialx+increx;
+        if (debug)
+        cout << x_bins[i] << "; ";
+    }
+
     //cout << q2_bins[i];}
     if (debug)
         cout << endl;
@@ -94,6 +105,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
 
     TFile *fout;
     TH1F *multP, *Q2P, *multa, *multb, *multc;
+TH2F* Q2X;
 
     TH2F *Q2E;
     THStack *s;
@@ -128,7 +140,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
     multa = hotTH1F("Q2_1", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlack, 0.3, 21, 1, true);
     multb = hotTH1F("Q2_1_neg", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kBlue, 0.3, 21, 1, true);
     multc = hotTH1F("Q2_1001", "dN/dQ2 vs Q2", 30, 0.5, 30.5, "", "", kMagenta, 0.3, 21, 1, true);
-
+Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
     Q2E = new TH2F("Q2E", "Heatmap of Electron momentum vs Q2", 30, q2_bins, 30, q2_bins);
     /*Q2E->GetXaxis()->SetTitle("Q^{2}");
     Q2E->GetYaxis()->SetTitle("-(k-k')^{2}");
@@ -173,6 +185,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
         //Q2 cut
 
         double q2 = event->GetQ2();
+        Q2X->Fill(event->GetX(),q2);
         if (debug)
             cout << "Q2: " << q2 << endl;
 
@@ -273,7 +286,6 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
 
             //ptHist.Fill(particle->GetPt());
             counter++;
-if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
             if (ks == 1)
                 countera++;
             if (ks == -1)
@@ -344,11 +356,7 @@ if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
-if (counter >=20) {
-//cout << "Event " << i << "counter: " << counter << " " << event->GetX() << endl;
-for (int kkk = 0; kkk< counter; kkk++){
-//cout << "particle " << kkk << " " << event->GetTrack(kkk)->GetPdgCode() << endl;
-}}
+
 
         if (q2 <= 1e3)
         {
@@ -395,6 +403,7 @@ for (int kkk = 0; kkk< counter; kkk++){
     Q2M_normed=(TH2F*)Q2M->Clone();
     Q2M_normed->Divide(Q2M_norm);
     Q2M->Write();
+    Q2X->Write();
     Q2M_norm->Write();
     Q2M_normed->Write();
     for (int i = 0; i < 30; i++)

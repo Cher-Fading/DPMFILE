@@ -87,7 +87,7 @@ gStyle->SetOptStat(0);
     a3_ave->Draw("APE");
 
     myText(0.5, 0.6, kBlack, Form("#sqrt{s} = %d GeV", (int)round(s)), 0.04);
-    myText(0.5, 0.75, kBlack, "0.03 < y < 0.95", 0.04);
+    myText(0.5, 0.75, kBlack, "0.01 < y < 0.95", 0.04);
     myText(0.5, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
     myText(0.5, 0.65, kBlack, "-1.5 < #eta_{trk} < 2.0", 0.04);
     myText(0.5, 0.55, kBlack, Form("%d GeV < E_{scattered}-p_{z,scattered} < %d GeV", (int)round(47. / 55. * 2. * come), (int)round(69. / 55. * 2. * come)));

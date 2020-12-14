@@ -21,12 +21,12 @@ echo output $output round $A queue $2
 
 TAB=$'\t'
 sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
-sed -i "s/^FSEED.*/FSEED           $((($NUM/20)%20-3))           $((13-$NUM%20))           $((($NUM/8000)%20-5))           $((10-($NUM/400)%20))/" /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
+sed -i "s/^FSEED.*/FSEED           $((($NUM/8000)%20-5))           $((10-($NUM/400)%20))           $((($NUM/20)%20-3))           $((13-$NUM%20))/" /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
 sed -i "s/^START.*/START          ${3}           0.0/" /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
 cat /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
 
-#/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp > /sphenix/user/xwang97/DPMJET/$1/log${1}_${2}.txt
-/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
+/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp > /sphenix/user/xwang97/DPMJET/$1/log${1}_${2}.txt
+#/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
 echo "now convert to root"
 root -q '/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/BuildIt.C("'fort.${output}'","'$B'")' > /sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}_log.txt
 mv /sphenix/user/xwang97/DPMJET/$1/$A/$B/fort.root /sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root
@@ -37,5 +37,5 @@ rm -rf /sphenix/user/xwang97/DPMJET/$1/$A/$B
 rm /sphenix/user/xwang97/DPMJET/$1/$A/fort.${output}
 echo "now read it"
 cd /sphenix/u/xwang97/DPMFILE
-root -b -q -l 'read_condor.cxx("'/sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root'", 0, false, 0, "fullcut", 1., 10.,1000.)'
+root -b -q -l 'read_condor.cxx("'/sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}.root'", 0, false, "fullcut", 1., 30.,1000.)'
 echo "finished"

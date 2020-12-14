@@ -237,19 +237,11 @@ Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
             }
             if (eta < -1.5 || eta > 2.0)
                 continue;
-            if (debug)
-                cout << "eta: " << eta << endl;
-            if (debug)
-                cout << "pt " << pt << " GeV" << endl;
             if (pt > 5 || pt < 0.1)
                 continue;
-            //cout << "particle mass number: " << particleeA->massNum << endl;
-            if (debug)
-                cout << "ks " << ks << "; pdg " << pdg << endl;
-            //final state particles only
-            if (ks != 1 && ks != -1 && ks != 1001)
+	    if (ks != 1 && ks != -1 && ks != 1001)
                 continue;
-            bool charged = false;
+	    bool charged = false;
             bool found = false;
             for (int k = 0; k < listn; k++)
             {
@@ -265,8 +257,7 @@ Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
                     found = true;
                 }
             }
-            if (debug)
-                cout << "found? " << found << "; charged? " << charged << endl;
+            
             if (!found)
             {
                 //cout << "not listed pdg id: " << pdg << endl;
@@ -283,7 +274,18 @@ Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
             if (!charged)
                 continue;
             //if(abs(pdg) != 211 ) continue;
-
+if (debug)
+                cout << "eta: " << eta << endl;
+            if (debug)
+                cout << "pt " << pt << " GeV" << endl;
+            //cout << "particle mass number: " << particleeA->massNum << endl;
+            if (debug)
+                cout << "ks " << ks << "; pdg " << pdg << endl;
+            //final state particles only
+            
+            
+            if (debug)
+                cout << "found? " << found << "; charged? " << charged << endl;
             //ptHist.Fill(particle->GetPt());
             counter++;
             if (ks == 1)
@@ -317,6 +319,11 @@ Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
                     Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
                     scattered = true;
                     scattered_ind = l;
+		    const Particle *part_sct = event->GetTrack(scattered_ind);
+		    if (debug){
+		    cout << "scattered: " << i << part_sct->GetE() << endl;
+		    cout << "scattered: " << part_sct->GetE() - part_sct->GetPz() << endl;
+		    cout << "come: " << come << endl;}
                 }
                 else
                 {
@@ -356,7 +363,10 @@ Q2X = new TH2F("Q2X","Q2 vs x",25,x_bins,30,q2_bins);
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 434580ec32b175d191fac2f3bd8f8f1906a73ad3
 
         if (q2 <= 1e3)
         {

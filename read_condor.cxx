@@ -224,19 +224,11 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
             }
             if (eta < -1.5 || eta > 2.0)
                 continue;
-            if (debug)
-                cout << "eta: " << eta << endl;
-            if (debug)
-                cout << "pt " << pt << " GeV" << endl;
             if (pt > 5 || pt < 0.1)
                 continue;
-            //cout << "particle mass number: " << particleeA->massNum << endl;
-            if (debug)
-                cout << "ks " << ks << "; pdg " << pdg << endl;
-            //final state particles only
-            if (ks != 1 && ks != -1 && ks != 1001)
+	    if (ks != 1 && ks != -1 && ks != 1001)
                 continue;
-            bool charged = false;
+	    bool charged = false;
             bool found = false;
             for (int k = 0; k < listn; k++)
             {
@@ -252,8 +244,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
                     found = true;
                 }
             }
-            if (debug)
-                cout << "found? " << found << "; charged? " << charged << endl;
+            
             if (!found)
             {
                 //cout << "not listed pdg id: " << pdg << endl;
@@ -270,10 +261,20 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
             if (!charged)
                 continue;
             //if(abs(pdg) != 211 ) continue;
-
+if (debug)
+                cout << "eta: " << eta << endl;
+            if (debug)
+                cout << "pt " << pt << " GeV" << endl;
+            //cout << "particle mass number: " << particleeA->massNum << endl;
+            if (debug)
+                cout << "ks " << ks << "; pdg " << pdg << endl;
+            //final state particles only
+            
+            
+            if (debug)
+                cout << "found? " << found << "; charged? " << charged << endl;
             //ptHist.Fill(particle->GetPt());
             counter++;
-if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
             if (ks == 1)
                 countera++;
             if (ks == -1)
@@ -305,6 +306,11 @@ if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
                     Q2E->Fill(q2, q2val, 1. / (ein.size() * eout.size()));
                     scattered = true;
                     scattered_ind = l;
+		    const Particle *part_sct = event->GetTrack(scattered_ind);
+		    if (debug){
+		    cout << "scattered: " << i << part_sct->GetE() << endl;
+		    cout << "scattered: " << part_sct->GetE() - part_sct->GetPz() << endl;
+		    cout << "come: " << come << endl;}
                 }
                 else
                 {
@@ -344,11 +350,6 @@ if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
-if (counter >=20) {
-//cout << "Event " << i << "counter: " << counter << " " << event->GetX() << endl;
-for (int kkk = 0; kkk< counter; kkk++){
-//cout << "particle " << kkk << " " << event->GetTrack(kkk)->GetPdgCode() << endl;
-}}
 
         if (q2 <= 1e3)
         {

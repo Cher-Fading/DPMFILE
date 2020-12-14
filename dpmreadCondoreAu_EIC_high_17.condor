@@ -14,7 +14,7 @@ Executable   = /sphenix/u/xwang97/DPMFILE/dpmandread_EICeA.sh
 ## first argument  - input cards
 ## second argument - process number
 # third argument - number of events per sample
-Arguments       = eAu_EIC_20 $(Process) 1E4 5000
+Arguments       = eAu_EIC_high_17 $(Process) 1E4 4250
 
 # The requirement line specifies which machines we want to
 # run this job on.  Any arbitrary classad expression can

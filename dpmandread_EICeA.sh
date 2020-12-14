@@ -21,7 +21,7 @@ echo output $output round $A queue $2
 
 TAB=$'\t'
 sed -i "s/^OUTPUT.*/OUTPUT           ${output}/" /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
-sed -i "s/^FSEED.*/FSEED           $((($NUM/8000)%20-5))           $((10-($NUM/400)%20))           $((($NUM/20)%20-3))           $((13-$NUM%20))/" /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
+sed -i "s/^FSEED.*/FSEED           $((($NUM/20)%20-3))           $((13-$NUM%20))           $((($NUM/8000)%20-5))           $((10-($NUM/400)%20))/" /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
 sed -i "s/^START.*/START          ${3}           0.0/" /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
 cat /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
 

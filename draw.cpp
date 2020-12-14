@@ -21,8 +21,9 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     TH1::AddDirectory(kFALSE);
     TH1F *a1 = (TH1F *)f1->Get("Q2");
     TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
+gStyle->SetOptStat(0);
     TPad *p0 = (TPad *)c0->cd();
-    TH1F *h0 = (TH1F *)p0->DrawFrame(q2_min, 1, 1000, 2e7);
+    TH1F *h0 = (TH1F *)p0->DrawFrame(q2_min, 1, q2_max_edge, 2e7);
     h0->Draw();
     c0->cd();
     h0->GetXaxis()->SetTitle("Q^{2}");
@@ -46,9 +47,9 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
         TLine *ly1 = new TLine(x1, y1 - a1->GetBinErrorLow(i), x1, y1 + a1->GetBinErrorUp(i));
         lx1->SetLineColor(kRed);
         ly1->SetLineColor(kRed);
-        if (a1->GetXaxis()->GetBinLowEdge(i) > 5 && a1->GetXaxis()->GetBinLowEdge(i + 1) < 1000 && y1 > 1e2)
+        if (a1->GetXaxis()->GetBinLowEdge(i) > q2_min && a1->GetXaxis()->GetBinLowEdge(i + 1) < q2_max_edge && y1 > 1e2)
             lx1->Draw("SAME");
-        if (x1 > 5 && x1 < 1000 && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
+        if (x1 > q2_min && x1 < q2_max_edge && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
             ly1->Draw("SAME");
     }
     myMarkerText(0.5, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);
@@ -73,12 +74,12 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     }
 
     c0->cd();
-    a3_ave->GetXaxis()->SetTitle("<Number of Tracks>");
-    a3_ave->GetYaxis()->SetTitle("Q^{2}");
-    a3_ave->GetXaxis()->SetRangeUser(a1->GetXaxis()->GetBinLowEdge(1), a1->GetXaxis()->GetBinLowEdge(31));
+    a3_ave->GetXaxis()->SetTitle("Q^{2}");
+    a3_ave->GetYaxis()->SetTitle("<Number of Tracks>");
+    a3_ave->GetXaxis()->SetRangeUser(a3_ave->GetXaxis()->GetBinLowEdge(1), a3_ave->GetXaxis()->GetBinLowEdge(31));
     //a3_ave->GetYaxis()->SetRangeUser(1e2, 2e7);
-    c0->SetLogy();
-    c0->SetLogx(0);
+    c0->SetLogy(0);
+    c0->SetLogx(1);
 
     a3_ave->SetMarkerSize(1);
     a3_ave->SetMarkerStyle(21);
@@ -105,6 +106,8 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     q2m->GetXaxis()->SetRangeUser(q2_min, q2_max_edge);
     c0->SetLogx(1);
     c0->SetLogy(0);
+gPad->SetRightMargin(0.2);
+q2m->GetZaxis()->SetTitleOffset(2);
     c0->SaveAs(Form("%s%s_%s_q2m%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
     TH2F *q2m_norm = (TH2F *)q2m->Clone();
     for (int i = 0; i < 30; i++)
@@ -129,6 +132,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     q2m_normed->GetXaxis()->SetRangeUser(q2_min, q2_max_edge);
     c0->SetLogx(1);
     c0->SetLogy(0);
+q2m_normed->GetZaxis()->SetTitleOffset(2);
     c0->SaveAs(Form("%s%s_%s_q2m_normed_%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
 
@@ -142,7 +146,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     h0->GetYaxis()->SetRangeUser(1e2, 2e7);
     c0->SetLogy();
     c0->SetLogx(0);
-
+gPad->SetRightMargin(0.1);
     a1->SetMarkerSize(1);
     a1->SetMarkerStyle(21);
     //gStyle->SetErrorX(0);

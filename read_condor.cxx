@@ -273,6 +273,7 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
 
             //ptHist.Fill(particle->GetPt());
             counter++;
+if (i==8018 || i==7982 || i==3583 || i == 617) cout << pdg << endl;
             if (ks == 1)
                 countera++;
             if (ks == -1)
@@ -343,6 +344,11 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, std::str
         multa->Fill(countera);
         multb->Fill(counterb);
         multc->Fill(counterc);
+if (counter >=20) {
+//cout << "Event " << i << "counter: " << counter << " " << event->GetX() << endl;
+for (int kkk = 0; kkk< counter; kkk++){
+//cout << "particle " << kkk << " " << event->GetTrack(kkk)->GetPdgCode() << endl;
+}}
 
         if (q2 <= 1e3)
         {

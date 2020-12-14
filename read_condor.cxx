@@ -50,7 +50,7 @@ const int charl[listn] = {-1, -1, 0, 0, 0, 0,
                           0, 2, 1, 1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
-void read_condor(TString filename, int nEvents = 0, bool debug = false, int passedlim = 0, std::string name = "fullcut", float Q2_cut = 5., float come = 27.5, float max_q2 = 10000.)
+void read_condor(TString filename, int nEvents = 0, bool debug = false, std::string name = "fullcut", float Q2_cut = 5., float come = 27.5, float max_q2 = 10000.)
 {
 
     float q2_min = Q2_cut;
@@ -179,7 +179,8 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
         if ((event->GetQ2()) < Q2_cut || (event->GetQ2() > max_q2))
         {
             ievnn++;
-            if (debug && passedlim == 0)
+            //if (debug && passedlim == 0)
+            if (debug)
                 cout << "Event " << i << " finished processing. " << endl
                      << endl;
             continue;
@@ -359,8 +360,8 @@ void read_condor(TString filename, int nEvents = 0, bool debug = false, int pass
                  << "; This is the " << nev << "-th event passing Q2 processed" << endl
                  << endl;
 
-        if (passedlim > 0 && nev >= passedlim)
-            break;
+        //if (passedlim > 0 && nev >= passedlim)
+        //    break;
     } // for
     outname = "/sphenix/user/xwang97/DPMJET/" + jobname + "/" + jobname + "_" + std::to_string(jobnum) + "_" + std::to_string(nentries) + "_" + evtnb + "_" + std::to_string(nev) + "_result" + name;
     //cout << outname << endl;

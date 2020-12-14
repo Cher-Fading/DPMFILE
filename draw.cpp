@@ -27,7 +27,7 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     c0->cd();
     h0->GetXaxis()->SetTitle("Q^{2}");
     h0->GetYaxis()->SetTitle("Counts");
-    h0->GetXaxis()->SetRangeUser(5, 1000);
+    h0->GetXaxis()->SetRangeUser(q2_min, q2_max);
     h0->GetYaxis()->SetRangeUser(1e2, 2e7);
     c0->SetLogy();
     c0->SetLogx();
@@ -61,6 +61,50 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
 
     c0->SaveAs(Form("%s%s_%s_q2%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
+    a1 = (TH1F *)f1->Get("Multi");
+    h0 = (TH1F *)p0->DrawFrame(0, 1, 30, 2e7);
+    h0->Draw();
+    c0->cd();
+    h0->GetXaxis()->SetTitle("Number of Tracks");
+    h0->GetYaxis()->SetTitle("Counts");
+    h0->GetXaxis()->SetRangeUser(0, 30);
+    h0->GetYaxis()->SetRangeUser(1e2, 2e7);
+    c0->SetLogy();
+    c0->SetLogx(0);
+
+    a1->SetMarkerSize(1);
+    a1->SetMarkerStyle(21);
+    //gStyle->SetErrorX(0);
+    a1->Draw("SAME HIST P");
+
+    myText(0.5, 0.6, kBlack, Form("#sqrt{s} = %d GeV",(int)round(s)), 0.04);
+    myText(0.5, 0.75, kBlack, Form("%.1f GeV < Q^{2} < %.1f GeV", q2_min,q2_max), 0.04);
+    myText(0.5, 0.7, kBlack, "0.1 GeV < p_{T}^{trk} < 5 GeV", 0.04);
+    myText(0.5, 0.65, kBlack, "-1.5 < #eta < 2.0", 0.04);
+    myText(0.5, 0.55, kBlack, Form("%d GeV < E_{scattered}-p_{z,scattered} < %d GeV",(int)round(47./55.*2.*come),(int)round(69./55.*2.*come)));
+    myText(0.5, 0.5, kBlack, Form("Number of Events: %d", entries));
+
+    for (int i = 1; i < 31; i++)
+    {
+        double y1 = a1->GetBinContent(i);
+        double x1 = a1->GetXaxis()->GetBinCenter(i);
+        TLine *lx1 = new TLine(a1->GetXaxis()->GetBinLowEdge(i), y1, a1->GetXaxis()->GetBinLowEdge(i + 1), y1);
+        TLine *ly1 = new TLine(x1, y1 - a1->GetBinErrorLow(i), x1, y1 + a1->GetBinErrorUp(i));
+        lx1->SetLineColor(kRed);
+        ly1->SetLineColor(kRed);
+        if (a1->GetXaxis()->GetBinLowEdge(i) > 0 && a1->GetXaxis()->GetBinLowEdge(i + 1) < 30 && y1 > 1e2)
+            lx1->Draw("SAME");
+        if (x1 > 5 && x1 < 30 && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
+            ly1->Draw("SAME");
+    }
+
+    c0->SaveAs(Form("%s%s_%s_multi%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
+
+TH1F* a3[30];
+TGraphErrors* a3_ave = hotTGraphErrors("multiplicity averaged vs Q2", "trksvsQ2", kRed, 0.8, 20, 1, 3003, 0.8);
+for (int i = 0; i < 30; i++){
+a3[i] = (TH1F*)f1->Get("");
+}
     a1 = (TH1F *)f1->Get("Multi");
     h0 = (TH1F *)p0->DrawFrame(0, 1, 30, 2e7);
     h0->Draw();

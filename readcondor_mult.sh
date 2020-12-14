@@ -1,6 +1,6 @@
 #!/bin/bash
-#./readcondor_mult.sh ep_HERA4 1E4 40
-#$1 jobname $2 event number $3 number of batches
+#./readcondor_mult.sh ep_HERA5 1E4 20 fullcut 5 27.5 10000
+#$1 jobname $2 event number $3 number of batches $4 cut string $5 q2 min $6 lepton momentum $7 maximum q2
 cd /sphenix/u/xwang97/DPMFILE
 #use a different condorjob for each batch of $400 simulations
 for ((i = 1; i <= $3; i++)); do
@@ -26,7 +26,7 @@ num=${#numfiles[@]}
     fi
     cp /sphenix/u/xwang97/DPMFILE/readCondor.condor /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
     sed -i "s/^Queue.*/Queue ${num}/" /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
-    sed -i "s/^Arguments.*/Arguments       = ${1}_${i} \$(Process) ${2}/" /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
+    sed -i "s/^Arguments.*/Arguments       = ${1}_${i} \$(Process) ${2} ${4} ${5} ${6} ${7}/" /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
     #cat /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
     condor_submit /sphenix/u/xwang97/DPMFILE/readCondor${1}_${i}.condor
 done

@@ -14,7 +14,7 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasLabels.C");
 gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 #endif
 
-void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut", float come = 27.5, float s = 100., float q2_min = 5., float q2_max = 10000.,float q2_max_edge = 1000.)
+void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches = 40, std::string evtnb = "1E4", std::string label = "fullcut", float come = 27.5, float s = 100., float q2_min = 5., float q2_max = 10000., float q2_max_edge = 1000.)
 {
     std::string batch = batchmode ? Form("_batch_%d", batches) : "";
     TFile *f1 = TFile::Open(Form("/sphenix/user/xwang97/DPMJET/%s_%s%s_result%s.root", jobname.c_str(), evtnb.c_str(), batch.c_str(), label.c_str()), "READ");
@@ -105,8 +105,8 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     for (int i = 0; i < 30; i++)
     {
         a3[i] = (TH1F *)(f1->Get(Form("q2_ave_%d", i))->Clone());
-        float lowedge = a1->GetXaxis()->GetBinLowEdge(i+1);
-        float highedge = a1->GetXaxis()->GetBinLowEdge(i+2);
+        float lowedge = a1->GetXaxis()->GetBinLowEdge(i + 1);
+        float highedge = a1->GetXaxis()->GetBinLowEdge(i + 2);
         a3_ave->SetPoint(i + 1, (lowedge + highedge) / 2., a3[i]->GetMean());
         a3_ave->SetPointError(i + 1, (highedge - lowedge) / 2., a3[i]->GetStdDev());
     }
@@ -134,4 +134,38 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     c0->SaveAs(Form("%s%s_%s_multi%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
     cout << "low edge: " << a1->GetXaxis()->GetBinLowEdge(1) << "; " << q2_min << endl;
     cout << "high edge: " << a1->GetXaxis()->GetBinLowEdge(31) << "; " << q2_max << endl;
+
+    c0->cd();
+    TH2F* q2m = (TH2F*)f1->Get("Q2M");
+    q2m->Draw("colz");
+    q2m->GetXaxis()->SetTitle("Q^{2}");
+    q2m->GetYaxis()->SetTitle("Track Multiplicity");
+    q2m->GetZaxis()->SetTitle("Number of Events");
+    q2m->GetXaxis()->SetRangeUser(q2_min,q2_max_edge);
+    c0->SetLogx(1);
+    c0->SetLogy(0);
+    c0->SaveAs(Form("%s%s_%s_q2m%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str());
+    TH2F* q2m_norm = (TH2F*)q2m->Clone();
+    for (int i = 0; i < 30; i++){//each q2 bin
+        float norm = 0;
+        for (int j = 0; j < 30; j++)
+        { //each mult bin
+            norm = norm + q2m->GetBinContent(i + 1, j + 1);
+        }
+        for (int k = 0; k < 30; k++)
+        {
+            q2m_norm->SetBinContent(i + 1, k + 1, norm);
+        }
+    }
+    TH2F* q2m_normed = (TH2F*)q2m->Clone();
+    q2m_normed->Divide(q2_norm);
+    c0->cd();
+    q2m_normed->Draw("colz");
+    q2m_normed->GetXaxis()->SetTitle("Q^{2}");
+    q2m_normed->GetYaxis()->SetTitle("Track Multiplicity");
+    q2m_normed->GetZaxis()->SetTitle("Fraction of Events (normalized per q2 bin)");
+    q2m_normed->GetXaxis()->SetRangeUser(q2_min,q2_max_edge);
+    c0->SetLogx(1);
+    c0->SetLogy(0);
+    c0->SaveAs(Form("%s%s_%s_q2m_normed_%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str());
 }

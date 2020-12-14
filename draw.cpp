@@ -23,13 +23,13 @@ void draw(std::string jobname = "ep_HERA4", bool batchmode = true, int batches =
     TCanvas *c0 = new TCanvas("c0", "c0", 500, 500);
 gStyle->SetOptStat(0);
     TPad *p0 = (TPad *)c0->cd();
-    TH1F *h0 = (TH1F *)p0->DrawFrame(q2_min, 1, q2_max_edge, 2e7);
+    TH1F *h0 = (TH1F *)p0->DrawFrame(q2_min, 1, q2_max_edge, 3e7);
     h0->Draw();
     c0->cd();
     h0->GetXaxis()->SetTitle("Q^{2}");
     h0->GetYaxis()->SetTitle("Counts");
     h0->GetXaxis()->SetRangeUser(q2_min, q2_max_edge);
-    h0->GetYaxis()->SetRangeUser(1e2, 2e7);
+    h0->GetYaxis()->SetRangeUser(1e2, 3e7);
     c0->SetLogy();
     c0->SetLogx();
 
@@ -49,7 +49,7 @@ gStyle->SetOptStat(0);
         ly1->SetLineColor(kRed);
         if (a1->GetXaxis()->GetBinLowEdge(i) > q2_min && a1->GetXaxis()->GetBinLowEdge(i + 1) < q2_max_edge && y1 > 1e2)
             lx1->Draw("SAME");
-        if (x1 > q2_min && x1 < q2_max_edge && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 1e7)
+        if (x1 > q2_min && x1 < q2_max_edge && y1 - a1->GetBinErrorLow(i) > 1e2 && y1 + a1->GetBinErrorUp(i) < 3e7)
             ly1->Draw("SAME");
     }
     myMarkerText(0.5, 0.85, kRed, 21, "Q^{2}", 1.2, 0.04);

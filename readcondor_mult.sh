@@ -3,7 +3,7 @@
 #$1 jobname $2 event number $3 number of batches $4 cut string $5 q2 min $6 lepton momentum $7 maximum q2
 cd /sphenix/u/xwang97/DPMFILE
 #use a different condorjob for each batch of $400 simulations
-for ((i = 1; i <= $3; i++)); do
+for ((i = $3; i <= $3; i++)); do
     if [ $3 > 1 ]; then
         ls /sphenix/user/xwang97/DPMJET/${1}_${i}/fort*${2}.root >"/sphenix/user/xwang97/DPMJET/${1}_${i}/${1}_${i}_${2}_files.txt"
 shopt -s nullglob

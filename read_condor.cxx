@@ -35,16 +35,16 @@ gROOT->LoadMacro("../atlasstyle-00-04-02/AtlasUtils.C");
 const float Q2_max = 1e3;
 //const float Q2_cut = 5.;
 
-const int listn = 35;
-const int partl[listn] = {11, 13, 16, 22, 81, 111,
+const int listn = 36;
+const int partl[listn] = {11, 12, 13, 16, 22, 81, 111,
                           130, 211, 310, 313, 321,
-                          323, 411, 421, 431, 2112,
+                          323, 411, 421, 431, 441,2112,
                           2212, 3122, 3222, 3112, 3212,
                           3322, 3312, 3334, 4112, 4122,
                           4132, 4222, 4232, 4212};
-const int charl[listn] = {-1, -1, 0, 0, 0, 0,
+const int charl[listn] = {-1, 0,-1, 0, 0, 0, 0,
                           0, 1, 0, 0, 1,
-                          1, 1, 0, 1, 0,
+                          1, 1, 0, 1, 0,0,
                           1, 0, 1, -1, 0,
                           0, -1, -1, 0, 1,
                           0, 2, 1, 1};

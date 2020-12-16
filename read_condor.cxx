@@ -50,6 +50,7 @@ const int charl[listn] = {-1, 0,-1, 0, 0, 0, 0,
                           0, 2, 1, 1};
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",5,true,false)' not limiting max passed Q2, debugging, limit max event to 5
 //root -q -l 'read.cxx("/sphenix/user/xwang97/DPMJET/ep_HERA2/fort_ep_HERA2_0_1E4.root",0,true,false,5)' limiting max passed Q2 to 5
+//root -b -q -l 'read_condor.cxx("'/sphenix/user/xwang97/DPMJET/eAu_EIC_high_1/fort_eAu_EIC_high_1_0_1E4.root'", 0, false, "fullcut", 1., 30.,1000.)'
 void read_condor(TString filename, int nEvents = 0, bool debug = false, std::string name = "fullcut", float Q2_cut = 5., float come = 27.5, float max_q2 = 10000.)
 {
 

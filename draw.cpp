@@ -95,7 +95,7 @@ gStyle->SetOptStat(0);
 
     c0->SaveAs(Form("%s%s_%s_q2m_ave%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
     cout << "low edge: " << a1->GetXaxis()->GetBinLowEdge(1) << "; " << q2_min << endl;
-    cout << "high edge: " << a1->GetXaxis()->GetBinLowEdge(31) << "; " << q2_max << endl;
+    cout << "high edge: " << a1->GetXaxis()->GetBinLowEdge(31) << "; " << q2_max_edge << endl;
 
     c0->cd();
     TH2F *q2m = (TH2F *)f1->Get("Q2M");
@@ -175,4 +175,16 @@ gPad->SetRightMargin(0.1);
 
     c0->SaveAs(Form("%s%s_%s_multi%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 
+c0->cd();
+TH2F* q2x = (TH2F*)f1->Get("Q2X");
+    q2x->Draw("colz");
+    q2x->GetXaxis()->SetTitle("Bjornken x");
+    q2x->GetYaxis()->SetTitle("Q^{2}");
+    q2x->GetZaxis()->SetTitle("Number of Events");
+    q2x->GetXaxis()->SetRangeUser(1e-5, 1);
+    c0->SetLogx(1);
+    c0->SetLogy(1);
+gPad->SetRightMargin(0.2);
+q2x->GetZaxis()->SetTitleOffset(2);
+c0->SaveAs(Form("%s%s_%s_q2x%s.png", jobname.c_str(), batch.c_str(), evtnb.c_str(), label.c_str()));
 }

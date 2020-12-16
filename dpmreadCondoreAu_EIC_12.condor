@@ -8,7 +8,7 @@ Notification    = Never
 
 # The executable we want to run.
 #Executable   = /usatlas/u/cher97/FTFAX/FTFAXCondor.sh
-Executable   = /sphenix/u/xwang97/DPMFILE/dpmandread_EICeA.sh
+Executable   = /sphenix/u/xwang97/DPMFILE/dpmandread_eAu_EIC.sh
 
 # The argument to pass to the executable.
 ## first argument  - input cards

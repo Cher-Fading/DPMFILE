@@ -8,13 +8,13 @@ Notification    = Never
 
 # The executable we want to run.
 #Executable   = /usatlas/u/cher97/FTFAX/FTFAXCondor.sh
-Executable   = /sphenix/u/xwang97/DPMFILE/dpmandread_EIC.sh
+Executable   = /sphenix/u/xwang97/DPMFILE/dpmandread_ep_EIC.sh
 
 # The argument to pass to the executable.
 ## first argument  - input cards
 ## second argument - process number
 # third argument - number of events per sample
-Arguments       = ep_EIC_2 $(Process) 1E4 1000
+Arguments       = ep_EIC_2 $(Process) 1E4 500
 
 # The requirement line specifies which machines we want to
 # run this job on.  Any arbitrary classad expression can
@@ -78,6 +78,6 @@ Log       =  /sphenix/u/xwang97/logFiles/log.$(Process)
 # accounting_group = group_atlas.uillu
 +NewQueue      = True
  
-Queue 500
+Queue 250
 
 

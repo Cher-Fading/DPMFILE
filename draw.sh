@@ -5,7 +5,7 @@ cd /sphenix/user/xwang97/DPMJET/
 touch ${1}_${2}_nofevt.txt
 tot=0
 for ((i = 1; i <= $3; i++)); do
-    #hadd -f $1_${i}_${2}_result$4.root $1_${i}/$1_${i}_*_${2}_*_result$4.root
+    hadd -f $1_${i}_${2}_result$4.root $1_${i}/$1_${i}_*_${2}_*_result$4.root
     num=0
 passednum=0
     for entry in $1_${i}/$1_${i}_*_${2}_*_result$4.root
@@ -35,7 +35,7 @@ echo "${1} ${i} passed:$passednum" >> /sphenix/user/xwang97/DPMJET/${1}_${2}_nof
     #cat /sphenix/u/xwang97/DPMFILE/dpmCondor$1$i.condor
     #condor_submit /sphenix/u/xwang97/DPMFILE/readCondor$1_$i.condor
 done
-#hadd -f ${1}_${2}_batch_${3}_result$4.root ${1}_*_${2}_result$4.root
+hadd -f ${1}_${2}_batch_${3}_result$4.root ${1}_*_${2}_result$4.root
 echo "${1} total:$tot"
 echo "${1} passed:$passed"
 echo "${1} total:$tot">>${1}_${2}_nofevt.txt

@@ -70,7 +70,7 @@ gStyle->SetOptStat(0);
         float lowedge = a1->GetXaxis()->GetBinLowEdge(i + 1);
         float highedge = a1->GetXaxis()->GetBinLowEdge(i + 2);
         a3_ave->SetPoint(i + 1, (lowedge + highedge) / 2., a3[i]->GetMean());
-        a3_ave->SetPointError(i + 1, (highedge - lowedge) / 2., a3[i]->GetStdDev());
+        a3_ave->SetPointError(i + 1, (highedge - lowedge) / 2., a3[i]->GetStdDev()/sqrt(a3[i]->GetEntries()));
     }
 
     c0->cd();

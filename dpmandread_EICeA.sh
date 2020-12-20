@@ -25,7 +25,7 @@ sed -i "s/^FSEED.*/FSEED           $((($NUM/8000)%20-5))           $((10-($NUM/4
 sed -i "s/^START.*/START          ${3}           0.0/" /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
 #cat /sphenix/user/xwang97/DPMJET/$1/${1}_${2}.inp
 
-/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp | tail -c 5G > /sphenix/user/xwang97/DPMJET/$1/log${1}_${2}.txt
+/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp | tail -c 500M > /sphenix/user/xwang97/DPMJET/$1/log${1}_${2}.txt
 #/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/dpmjet3.0-5F-new < /sphenix/user/xwang97/DPMJET/${1}/${1}_${2}.inp
 echo "now convert to root"
 root -q '/sphenix/user/xwang97/DPMJET/dpmjet3-32BIT/BuildIt.C("'fort.${output}'","'$B'")' > /sphenix/user/xwang97/DPMJET/$1/fort_${1}_${2}_${3}_log.txt
